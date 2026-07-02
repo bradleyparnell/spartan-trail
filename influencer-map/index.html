@@ -49,14 +49,22 @@
     .race-detail-header img{height:22px;filter:brightness(0) invert(1);opacity:.9}
     .race-detail-title{font-size:12px;font-weight:700;color:#81c9c0;flex:1}
     .race-detail-date{font-size:10px;color:#555}
-    .rdp-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
-    .rdp-field label{display:block;font-size:10px;font-weight:700;color:#555;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
-    .rdp-field input,.rdp-field select,.rdp-field textarea{width:100%;background:#0e0e0e;border:1px solid #1e2e2e;border-radius:6px;padding:6px 9px;font-size:12px;color:#e0e0e0;outline:none;font-family:inherit}
-    .rdp-field input:focus,.rdp-field select:focus,.rdp-field textarea:focus{border-color:#81c9c0}
-    .rdp-field textarea{resize:vertical;min-height:48px}
-    .rdp-field{margin-bottom:0}
+    /* promo table */
+    .rdp-promo-section{margin-bottom:8px}
+    .rdp-promo-header{display:grid;grid-template-columns:1fr 80px 90px 70px 22px;gap:4px;margin-bottom:4px}
+    .rdp-promo-header span{font-size:9px;font-weight:700;color:#444;text-transform:uppercase;letter-spacing:.06em}
+    .rdp-promo-row{display:grid;grid-template-columns:1fr 80px 90px 70px 22px;gap:4px;margin-bottom:4px;align-items:center}
+    .rdp-promo-row input{background:#0e0e0e;border:1px solid #1e2e2e;border-radius:5px;padding:5px 7px;font-size:11px;color:#e0e0e0;outline:none;font-family:inherit;width:100%}
+    .rdp-promo-row input:focus{border-color:#81c9c0}
+    .btn-del-promo{background:none;border:1px solid #2a2a2a;border-radius:4px;color:#555;font-size:12px;cursor:pointer;padding:0;width:22px;height:26px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .btn-del-promo:hover{border-color:#e06060;color:#e06060}
+    .btn-add-promo{background:none;border:1px dashed #2a4040;border-radius:5px;color:#81c9c0;font-size:11px;cursor:pointer;padding:4px 8px;width:100%;margin-top:2px;text-align:left}
+    .btn-add-promo:hover{border-color:#81c9c0;background:#0e1818}
+    /* notes + save */
     .rdp-notes{margin-top:8px}
     .rdp-notes label{display:block;font-size:10px;font-weight:700;color:#555;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+    .rdp-notes textarea{width:100%;background:#0e0e0e;border:1px solid #1e2e2e;border-radius:6px;padding:6px 9px;font-size:12px;color:#e0e0e0;outline:none;font-family:inherit;resize:vertical;min-height:48px}
+    .rdp-notes textarea:focus{border-color:#81c9c0}
     .rdp-save-row{display:flex;justify-content:space-between;align-items:center;margin-top:8px}
     .rdp-saved{font-size:10px;color:#81c9c0;opacity:0;transition:opacity .3s}
     .rdp-saved.show{opacity:1}
@@ -153,7 +161,7 @@
 <body>
 
 <div class="header">
-  <img src="https://www.spartantrail.com/wp-content/themes/yootheme/cache/3b/spartan_trail_logo_v1_WT-3bed8992.png" alt="Spartan Trail"/>
+  <img src="logos/st-logo.png" alt="Spartan Trail"/>
   <h1>Partner & Influencer Map</h1>
   <div class="header-stats">
     <div class="stat-pill">Total: <span id="total-count">0</span></div>
@@ -182,27 +190,14 @@
           <div class="race-detail-title" id="rdp-title"></div>
           <div class="race-detail-date" id="rdp-date"></div>
         </div>
-        <div class="rdp-row">
-          <div class="rdp-field">
-            <label>Promo Code</label>
-            <input type="text" id="rdp-code" placeholder="e.g. TRAILBRAD20"/>
+        <div class="rdp-promo-section">
+          <div class="rdp-promo-header">
+            <span>Promo Code</span><span>Discount</span><span>Expiry</span><span>Max Uses</span><span></span>
           </div>
-          <div class="rdp-field">
-            <label>Discount</label>
-            <input type="text" id="rdp-discount" placeholder="e.g. 20% or $10"/>
-          </div>
+          <div id="rdp-promo-rows"></div>
+          <button class="btn-add-promo" onclick="addPromoRow()">+ Add Promo Code</button>
         </div>
-        <div class="rdp-row">
-          <div class="rdp-field">
-            <label>Expiry Date</label>
-            <input type="date" id="rdp-expiry"/>
-          </div>
-          <div class="rdp-field">
-            <label>Max Uses</label>
-            <input type="text" id="rdp-maxuses" placeholder="e.g. 50 or unlimited"/>
-          </div>
-        </div>
-        <div class="rdp-notes rdp-field">
+        <div class="rdp-notes">
           <label>Race Notes</label>
           <textarea id="rdp-notes" placeholder="Registration link, key contacts, goals, talking points…"></textarea>
         </div>
@@ -335,17 +330,17 @@
 <script>
 // ── RACES ─────────────────────────────────────────────────────────────
 const RACES = [
-  { id:'whitewater',    name:'Whitewater Trail Challenge',  short:'Whitewater',   date:'Jun 20, 2026', lat:43.0,    lng:-88.2,    logo:'https://www.spartantrail.com/wp-content/themes/yootheme/cache/3b/spartan_trail_logo_v1_WT-3bed8992.png' },
-  { id:'blue-mountain', name:'Blue Mountain Trail Run',     short:'Blue Mtn',     date:'Jul 12, 2026', lat:40.8217, lng:-75.5157, logo:'https://www.spartantrail.com/wp-content/themes/yootheme/cache/d5/blue-mountain-logo-new-d5fcc16a.png' },
-  { id:'wasatch',       name:'Wasatch Scramble Trail Run',  short:'Wasatch',      date:'Jul 12, 2026', lat:41.2,    lng:-111.8,   logo:'https://www.spartantrail.com/wp-content/themes/yootheme/cache/74/wasatch-scramble-logo-new-743f765f.png' },
-  { id:'lake-placid',   name:'Lake Placid Trail Challenge', short:'Lake Placid',  date:'Aug 8, 2026',  lat:44.2198, lng:-73.9204, logo:'https://www.spartantrail.com/wp-content/themes/yootheme/cache/35/lake-placid-logo-new-35c6f5fc.png' },
-  { id:'calabogie',     name:'Calabogie Peaks Trail Run',   short:'Calabogie',    date:'Aug 23, 2026', lat:45.264,  lng:-76.787,  logo:'https://www.spartantrail.com/wp-content/themes/yootheme/cache/b8/calabogie-logo-new-b8b85dc5.png' },
-  { id:'country-roads', name:'Country Roads Trail Run',     short:'Cntry Roads',  date:'Aug 30, 2026', lat:37.975,  lng:-81.133,  logo:'https://www.spartantrail.com/wp-content/themes/yootheme/cache/e8/country-roads-logo-new-e8ee4aeb.png' },
-  { id:'san-jose',      name:'San Jose Trail Challenge',    short:'San Jose',     date:'Sep 27, 2026', lat:37.2336, lng:-122.009, logo:'https://www.spartantrail.com/wp-content/themes/yootheme/cache/b5/SAN-JOSE-TRAIL-CHALLENGE-b56dfde2.png' },
-  { id:'rancho-ramble', name:'Rancho Ramble Trail Run',     short:'Rancho',       date:'Nov 8, 2026',  lat:34.0,    lng:-118.3,   logo:'https://www.spartantrail.com/wp-content/themes/yootheme/cache/f8/rancho-ramble-logo-far-f8988e3a.png' },
-  { id:'golden-gate',   name:'Golden Gate Trail Classic',   short:'Golden Gate',  date:'Jan 23, 2027', lat:37.8399, lng:-122.483, logo:'https://www.spartantrail.com/wp-content/themes/yootheme/cache/a4/Golden-Gate-Trail_logo_BK_x2-a45bcefa.png' },
-  { id:'georgia-grit',  name:'Georgia Grit Trail Run',      short:'GA Grit',      date:'Mar 14, 2027', lat:33.678,  lng:-83.906,  logo:'https://www.spartantrail.com/wp-content/themes/yootheme/cache/58/georgia-grit-logo-new-587e2f40.png' },
-  { id:'toro-park',     name:'Toro Park Trail Run',          short:'Toro Park',    date:'May 30, 2027', lat:36.613,  lng:-121.699, logo:'https://www.spartantrail.com/wp-content/themes/yootheme/cache/a7/toro-park-logo-new-a7ad5ed9.png' },
+  { id:'whitewater',    name:'Whitewater Trail Challenge',  short:'Whitewater',   date:'Jun 20, 2026', lat:43.0,    lng:-88.2,    logo:'logos/st-logo.png' },
+  { id:'blue-mountain', name:'Blue Mountain Trail Run',     short:'Blue Mtn',     date:'Jul 12, 2026', lat:40.8217, lng:-75.5157, logo:'logos/blue-mountain.png' },
+  { id:'wasatch',       name:'Wasatch Scramble Trail Run',  short:'Wasatch',      date:'Jul 12, 2026', lat:41.2,    lng:-111.8,   logo:'logos/wasatch.png' },
+  { id:'lake-placid',   name:'Lake Placid Trail Challenge', short:'Lake Placid',  date:'Aug 8, 2026',  lat:44.2198, lng:-73.9204, logo:'logos/lake-placid.png' },
+  { id:'calabogie',     name:'Calabogie Peaks Trail Run',   short:'Calabogie',    date:'Aug 23, 2026', lat:45.264,  lng:-76.787,  logo:'logos/calabogie.png' },
+  { id:'country-roads', name:'Country Roads Trail Run',     short:'Cntry Roads',  date:'Aug 30, 2026', lat:37.975,  lng:-81.133,  logo:'logos/country-roads.png' },
+  { id:'san-jose',      name:'San Jose Trail Challenge',    short:'San Jose',     date:'Sep 27, 2026', lat:37.2336, lng:-122.009, logo:'logos/san-jose.png' },
+  { id:'rancho-ramble', name:'Rancho Ramble Trail Run',     short:'Rancho',       date:'Nov 8, 2026',  lat:34.0,    lng:-118.3,   logo:'logos/rancho-ramble.png' },
+  { id:'golden-gate',   name:'Golden Gate Trail Classic',   short:'Golden Gate',  date:'Jan 23, 2027', lat:37.8399, lng:-122.483, logo:'logos/golden-gate.png' },
+  { id:'georgia-grit',  name:'Georgia Grit Trail Run',      short:'GA Grit',      date:'Mar 14, 2027', lat:33.678,  lng:-83.906,  logo:'logos/georgia-grit.png' },
+  { id:'toro-park',     name:'Toro Park Trail Run',          short:'Toro Park',    date:'May 30, 2027', lat:36.613,  lng:-121.699, logo:'logos/toro-park.png' },
 ];
 
 // ── CATEGORIES ────────────────────────────────────────────────────────
@@ -444,6 +439,39 @@ RACES.forEach(r=>{
 });
 
 // ── RACE DETAIL PANEL ─────────────────────────────────────────────────
+function renderPromoRows(rows){
+  const container = document.getElementById('rdp-promo-rows');
+  container.innerHTML = '';
+  (rows||[]).forEach((r,i)=>{
+    const div = document.createElement('div');
+    div.className = 'rdp-promo-row';
+    div.innerHTML = `
+      <input type="text"  class="pr-code"    placeholder="TRAILBRAD20"  value="${(r.code||'').replace(/"/g,'&quot;')}"/>
+      <input type="text"  class="pr-discount" placeholder="20% or $10" value="${(r.discount||'').replace(/"/g,'&quot;')}"/>
+      <input type="date"  class="pr-expiry"  value="${r.expiry||''}"/>
+      <input type="text"  class="pr-maxuses" placeholder="50 or ∞"     value="${(r.maxuses||'').replace(/"/g,'&quot;')}"/>
+      <button class="btn-del-promo" onclick="removePromoRow(${i})" title="Remove">✕</button>`;
+    container.appendChild(div);
+  });
+}
+function getPromoRows(){
+  return Array.from(document.querySelectorAll('#rdp-promo-rows .rdp-promo-row')).map(row=>({
+    code:     row.querySelector('.pr-code').value.trim(),
+    discount: row.querySelector('.pr-discount').value.trim(),
+    expiry:   row.querySelector('.pr-expiry').value,
+    maxuses:  row.querySelector('.pr-maxuses').value.trim(),
+  })).filter(r=>r.code||r.discount||r.expiry||r.maxuses);
+}
+function addPromoRow(){
+  const d = raceData[activeRaceDetail] || {};
+  const rows = [...(d.promoCodes||[]), {code:'',discount:'',expiry:'',maxuses:''}];
+  renderPromoRows(rows);
+}
+function removePromoRow(idx){
+  const rows = getPromoRows();
+  rows.splice(idx,1);
+  renderPromoRows(rows);
+}
 function openRaceDetail(raceId){
   const race = raceById(raceId);
   activeRaceDetail = raceId;
@@ -451,11 +479,14 @@ function openRaceDetail(raceId){
   document.getElementById('rdp-title').textContent = race.name;
   document.getElementById('rdp-date').textContent  = race.date;
   const d = raceData[raceId] || {};
-  document.getElementById('rdp-code').value    = d.code    || '';
-  document.getElementById('rdp-discount').value= d.discount|| '';
-  document.getElementById('rdp-expiry').value  = d.expiry  || '';
-  document.getElementById('rdp-maxuses').value = d.maxuses || '';
-  document.getElementById('rdp-notes').value   = d.notes   || '';
+  // migrate old single-code format
+  let promoCodes = d.promoCodes || [];
+  if(!promoCodes.length && (d.code||d.discount)){
+    promoCodes = [{code:d.code||'',discount:d.discount||'',expiry:d.expiry||'',maxuses:d.maxuses||''}];
+  }
+  if(!promoCodes.length) promoCodes = [{code:'',discount:'',expiry:'',maxuses:''}];
+  renderPromoRows(promoCodes);
+  document.getElementById('rdp-notes').value = d.notes || '';
   document.getElementById('rdp-saved').classList.remove('show');
   document.getElementById('race-detail-panel').classList.add('open');
 }
@@ -466,11 +497,8 @@ function closeRaceDetail(){
 function saveRaceDetail(){
   if(!activeRaceDetail) return;
   raceData[activeRaceDetail] = {
-    code:     document.getElementById('rdp-code').value.trim(),
-    discount: document.getElementById('rdp-discount').value.trim(),
-    expiry:   document.getElementById('rdp-expiry').value,
-    maxuses:  document.getElementById('rdp-maxuses').value.trim(),
-    notes:    document.getElementById('rdp-notes').value.trim(),
+    promoCodes: getPromoRows(),
+    notes: document.getElementById('rdp-notes').value.trim(),
   };
   saveRaceData(raceData);
   renderRaceLogos();
@@ -478,7 +506,10 @@ function saveRaceDetail(){
   saved.classList.add('show');
   setTimeout(()=>saved.classList.remove('show'), 2000);
 }
-function hasPromo(raceId){ const d=raceData[raceId]||{}; return !!(d.code||d.discount||d.notes); }
+function hasPromo(raceId){
+  const d=raceData[raceId]||{};
+  return !!(d.notes||(d.promoCodes&&d.promoCodes.some(p=>p.code||p.discount))||(d.code));
+}
 
 // ── RENDER RACE LOGOS ──────────────────────────────────────────────────
 function renderRaceLogos(){
