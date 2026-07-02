@@ -21,8 +21,14 @@
     /* LAYOUT */
     .body{display:flex;flex:1;overflow:hidden}
 
-    /* SIDEBAR */
-    .sidebar{width:340px;background:#131313;border-right:1px solid #1e1e1e;display:flex;flex-direction:column;overflow:hidden;flex-shrink:0}
+    /* SIDEBAR — filters only */
+    .sidebar{width:260px;background:#131313;border-right:1px solid #1e1e1e;display:flex;flex-direction:column;overflow:hidden;flex-shrink:0}
+
+    /* CONTACTS COLUMN */
+    .contacts-col{width:300px;background:#0f0f0f;border-right:1px solid #1e1e1e;display:flex;flex-direction:column;overflow:hidden;flex-shrink:0}
+    .contacts-col-header{padding:7px 12px;border-bottom:1px solid #1e1e1e;flex-shrink:0;display:flex;align-items:center;justify-content:space-between}
+    .contacts-col-title{font-size:10px;font-weight:700;color:#555;text-transform:uppercase;letter-spacing:.08em}
+    .contacts-col-count{font-size:11px;color:#81c9c0;font-weight:700}
     .sidebar-top{padding:12px;border-bottom:1px solid #1e1e1e;flex-shrink:0}
     .search-row{display:flex;gap:8px;margin-bottom:10px}
     .search-row input{flex:1;background:#1a1a1a;border:1px solid #2a2a2a;border-radius:8px;padding:8px 12px;font-size:13px;color:#e0e0e0;outline:none}
@@ -85,44 +91,30 @@
     .sort-row select{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:6px;padding:4px 8px;font-size:11px;color:#ccc;outline:none;cursor:pointer;flex:1}
 
     /* LIST */
-    .contact-list{flex:1;overflow-y:auto;padding:8px}
+    .contact-list{flex:1;overflow-y:auto}
     .contact-list::-webkit-scrollbar{width:4px}
     .contact-list::-webkit-scrollbar-thumb{background:#2a2a2a;border-radius:4px}
     .no-results{padding:40px 20px;text-align:center;color:#444;font-size:13px}
 
-    /* CONTACT CARD */
-    .contact-card{background:#1a1a1a;border:1px solid #242424;border-radius:10px;padding:12px;margin-bottom:8px;cursor:pointer;transition:all .15s}
-    .contact-card:hover{border-color:#333;background:#1e1e1e}
-    .contact-card.selected{border-color:#81c9c0;background:#142222}
-    .card-top{display:flex;align-items:flex-start;gap:8px}
-    .card-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;margin-top:3px}
-    .card-name{font-size:13px;font-weight:700;color:#fff;flex:1;line-height:1.3}
-    .status-badge{font-size:9px;font-weight:700;padding:2px 7px;border-radius:10px;text-transform:uppercase;letter-spacing:.05em;white-space:nowrap;flex-shrink:0}
-    .status-new{background:#1a1a2a;color:#888;border:1px solid #333}
+    /* COMPACT CONTACT ROW */
+    .contact-row{display:flex;align-items:center;gap:8px;padding:7px 12px;cursor:pointer;border-bottom:1px solid #161616;transition:background .1s;min-height:44px}
+    .contact-row:hover{background:#1a1a1a}
+    .contact-row.selected{background:#102020;border-left:2px solid #81c9c0;padding-left:10px}
+    .cr-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+    .cr-body{flex:1;min-width:0}
+    .cr-name{font-size:12px;font-weight:700;color:#e0e0e0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.3}
+    .cr-sub{font-size:10px;color:#555;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px}
+    .cr-right{display:flex;align-items:center;gap:4px;flex-shrink:0}
+    .cr-race-img{height:13px;opacity:.75;flex-shrink:0}
+    .status-badge{font-size:9px;font-weight:700;padding:2px 6px;border-radius:8px;text-transform:uppercase;letter-spacing:.04em;white-space:nowrap;flex-shrink:0}
+    .status-new{background:#1a1a2a;color:#666;border:1px solid #2a2a3a}
     .status-contacted{background:#1a2030;color:#7ab0e0;border:1px solid #2a4060}
     .status-responded{background:#2a1a30;color:#c07ae0;border:1px solid #5a2a70}
     .status-confirmed{background:#1a2a1a;color:#81c9c0;border:1px solid #2a5a2a}
     .status-partner{background:#2a2010;color:#e0c070;border:1px solid #5a4a20}
-    .card-sub{font-size:11px;color:#666;margin-top:3px;padding-left:18px}
-    .card-race{display:inline-flex;align-items:center;gap:4px;background:#1e2a2a;border:1px solid #2a4040;border-radius:12px;padding:2px 8px;font-size:10px;color:#81c9c0;margin-top:5px;margin-left:18px}
-    .card-race img{height:14px;filter:brightness(0) invert(1);opacity:.8}
-    .card-contact-info{display:flex;gap:10px;margin-top:6px;padding-left:18px}
-    .card-contact-link{font-size:11px;color:#555;text-decoration:none;display:flex;align-items:center;gap:3px}
-    .card-contact-link:hover{color:#81c9c0}
-    .card-contact-link svg{opacity:.7}
-    .card-followers{font-size:11px;color:#555;margin-top:4px;padding-left:18px}
-    .card-notes-preview{font-size:11px;color:#666;margin-top:5px;border-left:2px solid #2a2a2a;padding-left:10px;margin-left:18px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-style:italic}
-    .card-actions{display:flex;gap:6px;margin-top:8px;padding-left:18px}
-    .btn-sm{background:#1e1e1e;border:1px solid #2a2a2a;border-radius:6px;padding:4px 10px;font-size:11px;color:#888;cursor:pointer;transition:all .15s}
+    .btn-sm{background:none;border:1px solid #242424;border-radius:5px;padding:3px 7px;font-size:11px;color:#666;cursor:pointer;transition:all .15s;line-height:1}
     .btn-sm:hover{border-color:#81c9c0;color:#81c9c0}
     .btn-sm.danger:hover{border-color:#e06060;color:#e06060}
-
-    /* NOTES INLINE */
-    .notes-area{display:none;margin-top:8px;padding-left:18px}
-    .notes-area textarea{width:100%;background:#111;border:1px solid #2a2a2a;border-radius:6px;padding:6px 8px;font-size:11px;color:#ccc;resize:vertical;min-height:56px;outline:none;font-family:inherit}
-    .notes-area textarea:focus{border-color:#81c9c0}
-    .notes-save-row{display:flex;justify-content:flex-end;margin-top:4px}
-    .btn-save-notes{background:#81c9c0;color:#0e0e0e;border:none;border-radius:6px;padding:4px 12px;font-size:11px;font-weight:700;cursor:pointer}
 
     /* MAP */
     #map{flex:1;z-index:1;height:100%}
@@ -282,6 +274,14 @@
       </div>
     </div>
 
+  </div>
+
+  <!-- CONTACTS COLUMN -->
+  <div class="contacts-col">
+    <div class="contacts-col-header">
+      <span class="contacts-col-title">All Contacts</span>
+      <span class="contacts-col-count" id="contacts-count">0</span>
+    </div>
     <div class="contact-list" id="contact-list">
       <div class="no-results">Loading…</div>
     </div>
@@ -713,35 +713,25 @@ function statusClass(s){
 // ── RENDER LIST ────────────────────────────────────────────────────────
 function renderList(list){
   const el = document.getElementById('contact-list');
+  const countEl = document.getElementById('contacts-count');
+  if(countEl) countEl.textContent = list.length;
   if(!list.length){ el.innerHTML='<div class="no-results">No results. Try adjusting filters.</div>'; return; }
   el.innerHTML = list.map(c=>{
     const cat  = CATS.find(x=>x.id===c.category)||{color:'#888',label:'Other'};
     const race = raceById(c.race);
-    const notesPreview = (c.notes||'').trim().slice(0,80);
+    const sub  = [cat.label, c.location].filter(Boolean).join(' · ');
     return `
-    <div class="contact-card${selectedId===c.id?' selected':''}" id="card-${c.id}" onclick="openContactModal('${c.id}')">
-      <div class="card-top">
-        <span class="card-dot" style="background:${cat.color}"></span>
-        <span class="card-name">${c.name}</span>
+    <div class="contact-row${selectedId===c.id?' selected':''}" id="card-${c.id}" onclick="openContactModal('${c.id}')">
+      <span class="cr-dot" style="background:${cat.color}"></span>
+      <div class="cr-body">
+        <div class="cr-name">${c.name}</div>
+        ${sub?`<div class="cr-sub">${sub}</div>`:''}
+      </div>
+      <div class="cr-right">
+        ${race.id?`<img class="cr-race-img" src="${race.logo}" alt="" title="${race.short}"/>`:''}
         <span class="status-badge ${statusClass(c.status)}">${statusLabel(c.status)}</span>
-      </div>
-      <div class="card-sub">${cat.label}${c.location?' · '+c.location:''}</div>
-      ${race.id?`<div class="card-race"><img src="${race.logo}" alt=""/>${race.short}</div>`:''}
-      ${(c.phone||c.email)?`<div class="card-contact-info">
-        ${c.phone?`<a class="card-contact-link" href="tel:${c.phone}" onclick="event.stopPropagation()"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 8.81 19.79 19.79 0 01.11 2.18 2 2 0 012.11 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 14.92v2z"/></svg>${c.phone}</a>`:''}
-        ${c.email?`<a class="card-contact-link" href="mailto:${c.email}" onclick="event.stopPropagation()"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,12 2,6"/></svg>${c.email}</a>`:''}
-      </div>`:''}
-      ${c.ig?`<div class="card-followers">${c.ig}${c.followers?' · '+c.followers:''}</div>`:''}
-      ${notesPreview?`<div class="card-notes-preview">${notesPreview}${(c.notes||'').length>80?'…':''}</div>`:''}
-      <div class="card-actions">
-        <button class="btn-sm" onclick="event.stopPropagation();openEditModal('${c.id}')">Edit</button>
-        <button class="btn-sm" onclick="event.stopPropagation();toggleNotes('${c.id}')">Notes</button>
-        <button class="btn-sm" onclick="event.stopPropagation();cycleStatus('${c.id}')">Status ↓</button>
-        <button class="btn-sm danger" onclick="event.stopPropagation();deleteContact('${c.id}')">✕</button>
-      </div>
-      <div class="notes-area" id="notes-${c.id}">
-        <textarea id="notesta-${c.id}" placeholder="Add notes…">${c.notes||''}</textarea>
-        <div class="notes-save-row"><button class="btn-save-notes" onclick="saveNotes('${c.id}')">Save Notes</button></div>
+        <button class="btn-sm" onclick="event.stopPropagation();openEditModal('${c.id}')" title="Edit">✎</button>
+        <button class="btn-sm" onclick="event.stopPropagation();cycleStatus('${c.id}')" title="Next status">↓</button>
       </div>
     </div>`;
   }).join('');
@@ -786,7 +776,7 @@ function renderMapMarkers(filtered){
 
 function selectContact(id){
   selectedId=selectedId===id?null:id;
-  document.querySelectorAll('.contact-card').forEach(el=>{
+  document.querySelectorAll('.contact-row').forEach(el=>{
     el.classList.toggle('selected', el.id==='card-'+selectedId);
   });
   if(selectedId&&mapMarkers[selectedId]){
@@ -904,7 +894,7 @@ function openContactModal(id){
   // pan map
   if(mapMarkers[id]){ map.setView([c.lat,c.lng],13,{animate:true}); mapMarkers[id].openTooltip(); }
   // highlight card
-  document.querySelectorAll('.contact-card').forEach(el=>el.classList.toggle('selected', el.id==='card-'+id));
+  document.querySelectorAll('.contact-row').forEach(el=>el.classList.toggle('selected', el.id==='card-'+id));
   const cardEl = document.getElementById('card-'+id);
   if(cardEl) cardEl.scrollIntoView({behavior:'smooth',block:'nearest'});
 }
