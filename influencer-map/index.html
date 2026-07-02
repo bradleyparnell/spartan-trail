@@ -32,12 +32,8 @@
 
     /* RACE LOGOS */
     .race-logos-label{font-size:10px;font-weight:700;color:#555;text-transform:uppercase;letter-spacing:.08em;margin-bottom:7px}
-    .race-list{display:flex;flex-direction:column;gap:1px;margin-bottom:8px}
-    .race-list-item{display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:6px;cursor:pointer;transition:background .12s;font-size:12px;color:#aaa;font-weight:500}
-    .race-list-item:hover{background:#1a1a1a;color:#ddd}
-    .race-list-item.active{background:#0f2020;color:#81c9c0;font-weight:700}
-    .race-list-item .promo-dot{width:6px;height:6px;border-radius:50%;background:#2a2a2a;flex-shrink:0}
-    .race-list-item .promo-dot.has-promo{background:#81c9c0}
+    #race-select{width:100%;background:#0e0e0e;border:1px solid #1e2e2e;border-radius:7px;padding:8px 10px;font-size:12px;color:#e0e0e0;font-family:inherit;outline:none;cursor:pointer;margin-bottom:8px}
+    #race-select:focus{border-color:#81c9c0}
     .promo-dot{position:absolute;top:3px;right:3px;width:6px;height:6px;border-radius:50%;background:#81c9c0;display:none}
     .promo-dot.has-promo{display:block}
 
@@ -50,10 +46,10 @@
     .race-detail-date{font-size:10px;color:#555}
     /* promo table */
     .rdp-promo-section{margin-bottom:8px}
-    .rdp-promo-header{display:grid;grid-template-columns:2fr 70px 80px 60px 22px;gap:4px;margin-bottom:4px}
-    .rdp-promo-header span{font-size:9px;font-weight:700;color:#444;text-transform:uppercase;letter-spacing:.06em}
-    .rdp-promo-row{display:grid;grid-template-columns:2fr 70px 80px 60px 22px;gap:4px;margin-bottom:4px;align-items:center}
-    .rdp-promo-row input{background:#0e0e0e;border:1px solid #1e2e2e;border-radius:5px;padding:5px 7px;font-size:11px;color:#e0e0e0;outline:none;font-family:inherit;width:100%}
+    .rdp-promo-header{display:grid;grid-template-columns:2fr 1fr 1fr 1fr 26px;gap:6px;margin-bottom:6px}
+    .rdp-promo-header span{font-size:10px;font-weight:700;color:#555;text-transform:uppercase;letter-spacing:.06em}
+    .rdp-promo-row{display:grid;grid-template-columns:2fr 1fr 1fr 1fr 26px;gap:6px;margin-bottom:6px;align-items:center}
+    .rdp-promo-row input{background:#0e0e0e;border:1px solid #1e2e2e;border-radius:6px;padding:8px 10px;font-size:13px;color:#e0e0e0;outline:none;font-family:inherit;width:100%;box-sizing:border-box}
     .rdp-promo-row input:focus{border-color:#81c9c0}
     .btn-del-promo{background:none;border:1px solid #2a2a2a;border-radius:4px;color:#555;font-size:12px;cursor:pointer;padding:0;width:22px;height:26px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
     .btn-del-promo:hover{border-color:#e06060;color:#e06060}
@@ -223,7 +219,9 @@
       </div>
 
       <div class="race-logos-label">Filter by Race</div>
-      <div class="race-list" id="race-logos"></div>
+      <select id="race-select" onchange="onRaceSelectChange(this.value)">
+        <option value="">— All Races —</option>
+      </select>
 
       <!-- RACE DETAIL / PROMO PANEL -->
       <div class="race-detail-panel" id="race-detail-panel">
@@ -573,8 +571,7 @@ function getPromoRows(){
   })).filter(r=>r.code||r.discount||r.expiry||r.maxuses);
 }
 function addPromoRow(){
-  const d = raceData[activeRaceDetail] || {};
-  const rows = [...(d.promoCodes||[]), {code:'',discount:'',expiry:'',maxuses:''}];
+  const rows = [...getPromoRows(), {code:'',discount:'',expiry:'',maxuses:''}];
   renderPromoRows(rows);
 }
 function removePromoRow(idx){
@@ -621,32 +618,35 @@ function hasPromo(raceId){
   return !!(d.notes||(d.promoCodes&&d.promoCodes.some(p=>p.code||p.discount))||(d.code));
 }
 
-// ── RENDER RACE LOGOS ──────────────────────────────────────────────────
+// ── RENDER RACE DROPDOWN ───────────────────────────────────────────────
 function renderRaceLogos(){
-  const container = document.getElementById('race-logos');
-  container.innerHTML = '';
+  const sel = document.getElementById('race-select');
+  if(!sel) return;
+  const current = sel.value;
+  sel.innerHTML = '<option value="">— All Races —</option>';
   RACES.forEach(r=>{
-    const item = document.createElement('div');
-    item.className = 'race-list-item' + (selectedRaces.has(r.id)?' active':'');
-    item.title = r.name + ' — ' + r.date;
-    item.innerHTML = `<span class="promo-dot${hasPromo(r.id)?' has-promo':''}"></span>${r.name}`;
-    item.onclick = ()=>toggleRace(r.id);
-    container.appendChild(item);
+    const opt = document.createElement('option');
+    opt.value = r.id;
+    opt.textContent = r.name + (hasPromo(r.id) ? ' ●' : '');
+    if(selectedRaces.has(r.id)) opt.selected = true;
+    sel.appendChild(opt);
   });
 }
 
-function toggleRace(id){
-  if(selectedRaces.has(id)){
-    selectedRaces.delete(id);
-    if(activeRaceDetail===id) closeRaceDetail();
-  } else {
+function onRaceSelectChange(id){
+  selectedRaces.clear();
+  if(id){
     selectedRaces.add(id);
     openRaceDetail(id);
+  } else {
+    closeRaceDetail();
   }
-  if(selectedRaces.size===1) openRaceDetail([...selectedRaces][0]);
-  else if(selectedRaces.size===0) closeRaceDetail();
-  renderRaceLogos();
   applyFilters();
+}
+
+function toggleRace(id){
+  onRaceSelectChange(selectedRaces.has(id) ? '' : id);
+  renderRaceLogos();
 }
 
 // ── RENDER CATEGORY FILTERS ────────────────────────────────────────────
