@@ -156,6 +156,52 @@
     .legend-row{display:flex;align-items:center;gap:7px;margin-bottom:5px;color:#aaa}
     .legend-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
     .legend-race-dot{width:10px;height:10px;border-radius:2px;flex-shrink:0;background:#81c9c0}
+
+    /* CONTACT DETAIL MODAL */
+    .cd-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:2000;align-items:center;justify-content:center;padding:16px}
+    .cd-overlay.open{display:flex}
+    .cd-modal{background:#161616;border:1px solid #2a2a2a;border-radius:16px;width:500px;max-width:96vw;max-height:90vh;overflow-y:auto;display:flex;flex-direction:column}
+    .cd-modal::-webkit-scrollbar{width:4px}
+    .cd-modal::-webkit-scrollbar-thumb{background:#2a2a2a;border-radius:4px}
+    /* header */
+    .cd-header{padding:20px 20px 14px;border-bottom:1px solid #222;position:sticky;top:0;background:#161616;z-index:1;border-radius:16px 16px 0 0}
+    .cd-header-top{display:flex;align-items:flex-start;gap:10px;margin-bottom:6px}
+    .cd-color-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0;margin-top:4px}
+    .cd-name{font-size:17px;font-weight:700;color:#fff;flex:1;line-height:1.3}
+    .cd-close{background:none;border:none;color:#555;font-size:20px;cursor:pointer;padding:0 0 0 8px;line-height:1;flex-shrink:0}
+    .cd-close:hover{color:#ccc}
+    .cd-header-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+    .cd-cat-label{font-size:11px;color:#888}
+    .cd-race-chip{display:inline-flex;align-items:center;gap:4px;background:#1e2a2a;border:1px solid #2a4040;border-radius:10px;padding:2px 8px;font-size:10px;color:#81c9c0}
+    .cd-race-chip img{height:13px;filter:brightness(0) invert(1);opacity:.8}
+    /* body */
+    .cd-body{padding:16px 20px;flex:1}
+    .cd-section{margin-bottom:16px}
+    .cd-section-label{font-size:9px;font-weight:700;color:#444;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px}
+    .cd-info-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+    .cd-info-item{background:#1a1a1a;border:1px solid #222;border-radius:8px;padding:9px 12px}
+    .cd-info-item.full{grid-column:1/-1}
+    .cd-info-label{font-size:9px;font-weight:700;color:#555;text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px}
+    .cd-info-value{font-size:12px;color:#ccc}
+    .cd-info-value a{color:#81c9c0;text-decoration:none}
+    .cd-info-value a:hover{text-decoration:underline}
+    .cd-info-value.empty{color:#3a3a3a;font-style:italic}
+    /* notes */
+    .cd-notes-ta{width:100%;background:#111;border:1px solid #222;border-radius:8px;padding:9px 12px;font-size:12px;color:#ccc;outline:none;font-family:inherit;resize:vertical;min-height:80px}
+    .cd-notes-ta:focus{border-color:#81c9c0}
+    .cd-notes-save-row{display:flex;align-items:center;justify-content:space-between;margin-top:6px}
+    .cd-notes-saved{font-size:10px;color:#81c9c0;opacity:0;transition:opacity .3s}
+    .cd-notes-saved.show{opacity:1}
+    /* footer */
+    .cd-footer{padding:14px 20px;border-top:1px solid #1e1e1e;display:flex;gap:8px;align-items:center;background:#161616;border-radius:0 0 16px 16px;position:sticky;bottom:0}
+    .cd-status-badge{font-size:10px;font-weight:700;padding:4px 10px;border-radius:10px;text-transform:uppercase;letter-spacing:.05em;cursor:pointer;transition:all .15s}
+    .cd-status-badge:hover{opacity:.8}
+    .cd-spacer{flex:1}
+    .cd-btn{background:#1e1e1e;border:1px solid #2a2a2a;border-radius:8px;padding:7px 16px;font-size:12px;color:#888;cursor:pointer;transition:all .15s}
+    .cd-btn:hover{border-color:#81c9c0;color:#81c9c0}
+    .cd-btn.primary{background:#81c9c0;border-color:#81c9c0;color:#0e0e0e;font-weight:700}
+    .cd-btn.primary:hover{background:#6ab8af}
+    .cd-btn.danger:hover{border-color:#e06060;color:#e06060}
   </style>
 </head>
 <body>
@@ -610,7 +656,7 @@ function renderList(list){
     const race = raceById(c.race);
     const notesPreview = (c.notes||'').trim().slice(0,80);
     return `
-    <div class="contact-card${selectedId===c.id?' selected':''}" id="card-${c.id}" onclick="selectContact('${c.id}')">
+    <div class="contact-card${selectedId===c.id?' selected':''}" id="card-${c.id}" onclick="openContactModal('${c.id}')">
       <div class="card-top">
         <span class="card-dot" style="background:${cat.color}"></span>
         <span class="card-name">${c.name}</span>
@@ -670,7 +716,7 @@ function renderMapMarkers(filtered){
     const race=raceById(c.race);
     const m=L.marker([c.lat,c.lng],{icon:makeContactIcon(c.category,c.status)}).addTo(map);
     m.bindTooltip(`<b>${c.name}</b><br/>${statusLabel(c.status)}${race.short?' · '+race.short:''}`,{className:'leaflet-tooltip',direction:'top'});
-    m.on('click',()=>selectContact(c.id));
+    m.on('click',()=>openContactModal(c.id));
     mapMarkers[c.id]=m;
   });
 }
@@ -754,6 +800,81 @@ function saveContact(){
   saveContacts(contacts); closeModal(); renderCatFilters(); renderLegend(); applyFilters();
 }
 document.getElementById('modal-overlay').addEventListener('click',e=>{ if(e.target===e.currentTarget) closeModal(); });
+// ── CONTACT DETAIL MODAL ──────────────────────────────────────────────
+let activeContactId = null;
+function openContactModal(id){
+  const c = contacts.find(x=>x.id===id);
+  if(!c) return;
+  activeContactId = id;
+  selectedId = id;
+  // dot
+  const cat = CATS.find(x=>x.id===c.category)||{color:'#888',label:'Other'};
+  document.getElementById('cd-dot').style.background = cat.color;
+  document.getElementById('cd-name').textContent = c.name;
+  document.getElementById('cd-cat-label').textContent = cat.label;
+  // race chip
+  const race = raceById(c.race);
+  const raceChip = document.getElementById('cd-race-chip');
+  raceChip.innerHTML = race.id
+    ? `<span class="cd-race-chip"><img src="${race.logo}" alt=""/>${race.short} · ${race.date}</span>` : '';
+  // status badge
+  const sb = document.getElementById('cd-status-badge');
+  sb.textContent = statusLabel(c.status);
+  sb.className = 'status-badge ' + statusClass(c.status);
+  // info fields
+  const setVal = (id, val, href) => {
+    const el = document.getElementById(id);
+    if(val){ el.className='cd-info-value'; el.innerHTML = href ? `<a href="${href}" onclick="event.stopPropagation()">${val}</a>` : val; }
+    else { el.className='cd-info-value empty'; el.textContent='—'; }
+  };
+  setVal('cd-location', c.location);
+  setVal('cd-ig', c.ig, c.ig ? 'https://instagram.com/'+c.ig.replace('@','') : '');
+  setVal('cd-phone', c.phone, c.phone ? 'tel:'+c.phone : '');
+  setVal('cd-email', c.email, c.email ? 'mailto:'+c.email : '');
+  setVal('cd-followers', c.followers);
+  setVal('cd-category', cat.label);
+  document.getElementById('cd-notes-ta').value = c.notes || '';
+  document.getElementById('cd-notes-saved').classList.remove('show');
+  document.getElementById('cd-overlay').classList.add('open');
+  // pan map
+  if(mapMarkers[id]){ map.setView([c.lat,c.lng],13,{animate:true}); mapMarkers[id].openTooltip(); }
+  // highlight card
+  document.querySelectorAll('.contact-card').forEach(el=>el.classList.toggle('selected', el.id==='card-'+id));
+  const cardEl = document.getElementById('card-'+id);
+  if(cardEl) cardEl.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+function closeContactModal(){
+  document.getElementById('cd-overlay').classList.remove('open');
+  activeContactId = null;
+}
+function saveContactModalNotes(){
+  if(!activeContactId) return;
+  const c = contacts.find(x=>x.id===activeContactId);
+  if(!c) return;
+  c.notes = document.getElementById('cd-notes-ta').value.trim();
+  saveContacts(contacts);
+  applyFilters();
+  const saved = document.getElementById('cd-notes-saved');
+  saved.classList.add('show');
+  setTimeout(()=>saved.classList.remove('show'), 2000);
+}
+function cycleStatusFromModal(){
+  if(!activeContactId) return;
+  cycleStatus(activeContactId);
+  openContactModal(activeContactId);
+}
+function editFromModal(){
+  if(!activeContactId) return;
+  closeContactModal();
+  openEditModal(activeContactId);
+}
+function deleteFromModal(){
+  if(!activeContactId) return;
+  deleteContact(activeContactId);
+  closeContactModal();
+}
+document.getElementById('cd-overlay').addEventListener('click', e=>{ if(e.target===e.currentTarget) closeContactModal(); });
+
 document.getElementById('search-input').addEventListener('input',applyFilters);
 
 // ── INIT ──────────────────────────────────────────────────────────────
@@ -763,5 +884,50 @@ renderCatFilters();
 renderLegend();
 applyFilters();
 </script>
+
+<!-- CONTACT DETAIL MODAL -->
+<div class="cd-overlay" id="cd-overlay">
+  <div class="cd-modal" id="cd-modal">
+    <div class="cd-header">
+      <div class="cd-header-top">
+        <span class="cd-color-dot" id="cd-dot"></span>
+        <span class="cd-name" id="cd-name"></span>
+        <button class="cd-close" onclick="closeContactModal()">×</button>
+      </div>
+      <div class="cd-header-meta">
+        <span class="cd-cat-label" id="cd-cat-label"></span>
+        <span id="cd-race-chip"></span>
+        <span class="status-badge" id="cd-status-badge"></span>
+      </div>
+    </div>
+    <div class="cd-body">
+      <div class="cd-section">
+        <div class="cd-section-label">Contact Info</div>
+        <div class="cd-info-grid">
+          <div class="cd-info-item"><div class="cd-info-label">Location</div><div class="cd-info-value" id="cd-location"></div></div>
+          <div class="cd-info-item"><div class="cd-info-label">Instagram</div><div class="cd-info-value" id="cd-ig"></div></div>
+          <div class="cd-info-item"><div class="cd-info-label">Phone</div><div class="cd-info-value" id="cd-phone"></div></div>
+          <div class="cd-info-item"><div class="cd-info-label">Email</div><div class="cd-info-value" id="cd-email"></div></div>
+          <div class="cd-info-item"><div class="cd-info-label">Followers</div><div class="cd-info-value" id="cd-followers"></div></div>
+          <div class="cd-info-item"><div class="cd-info-label">Category</div><div class="cd-info-value" id="cd-category"></div></div>
+        </div>
+      </div>
+      <div class="cd-section">
+        <div class="cd-section-label">Notes</div>
+        <textarea class="cd-notes-ta" id="cd-notes-ta" placeholder="Key contact name, relationship, talking points, outreach history…"></textarea>
+        <div class="cd-notes-save-row">
+          <span class="cd-notes-saved" id="cd-notes-saved">Saved ✓</span>
+          <button class="cd-btn primary" onclick="saveContactModalNotes()">Save Notes</button>
+        </div>
+      </div>
+    </div>
+    <div class="cd-footer">
+      <button class="cd-btn" id="cd-cycle-btn" onclick="cycleStatusFromModal()">Advance Status</button>
+      <span class="cd-spacer"></span>
+      <button class="cd-btn" onclick="editFromModal()">Edit</button>
+      <button class="cd-btn danger" onclick="deleteFromModal()">Remove</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>
