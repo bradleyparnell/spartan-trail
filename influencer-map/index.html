@@ -373,6 +373,53 @@
   </div>
 </div>
 
+
+<!-- CONTACT DETAIL MODAL -->
+<div class="cd-overlay" id="cd-overlay">
+  <div class="cd-modal" id="cd-modal">
+    <div class="cd-header">
+      <div class="cd-header-top">
+        <span class="cd-color-dot" id="cd-dot"></span>
+        <span class="cd-name" id="cd-name"></span>
+        <button class="cd-close" onclick="closeContactModal()">×</button>
+      </div>
+      <div class="cd-header-meta">
+        <span class="cd-cat-label" id="cd-cat-label"></span>
+        <span id="cd-race-chip"></span>
+        <span class="status-badge" id="cd-status-badge"></span>
+      </div>
+    </div>
+    <div class="cd-body">
+      <div class="cd-section">
+        <div class="cd-section-label">Contact Info</div>
+        <div class="cd-info-grid">
+          <div class="cd-info-item"><div class="cd-info-label">Location</div><div class="cd-info-value" id="cd-location"></div></div>
+          <div class="cd-info-item"><div class="cd-info-label">Instagram</div><div class="cd-info-value" id="cd-ig"></div></div>
+          <div class="cd-info-item"><div class="cd-info-label">Phone</div><div class="cd-info-value" id="cd-phone"></div></div>
+          <div class="cd-info-item"><div class="cd-info-label">Email</div><div class="cd-info-value" id="cd-email"></div></div>
+          <div class="cd-info-item"><div class="cd-info-label">Followers</div><div class="cd-info-value" id="cd-followers"></div></div>
+          <div class="cd-info-item"><div class="cd-info-label">Category</div><div class="cd-info-value" id="cd-category"></div></div>
+        </div>
+      </div>
+      <div class="cd-section">
+        <div class="cd-section-label">Notes</div>
+        <textarea class="cd-notes-ta" id="cd-notes-ta" placeholder="Key contact name, relationship, talking points, outreach history…"></textarea>
+        <div class="cd-notes-save-row">
+          <span class="cd-notes-saved" id="cd-notes-saved">Saved ✓</span>
+          <button class="cd-btn primary" onclick="saveContactModalNotes()">Save Notes</button>
+        </div>
+      </div>
+    </div>
+    <div class="cd-footer">
+      <button class="cd-btn" id="cd-cycle-btn" onclick="cycleStatusFromModal()">Advance Status</button>
+      <span class="cd-spacer"></span>
+      <button class="cd-btn" onclick="editFromModal()">Edit</button>
+      <button class="cd-btn danger" onclick="deleteFromModal()">Remove</button>
+    </div>
+  </div>
+</div>
+
+
 <script>
 // ── RACES ─────────────────────────────────────────────────────────────
 const RACES = [
@@ -885,49 +932,5 @@ renderLegend();
 applyFilters();
 </script>
 
-<!-- CONTACT DETAIL MODAL -->
-<div class="cd-overlay" id="cd-overlay">
-  <div class="cd-modal" id="cd-modal">
-    <div class="cd-header">
-      <div class="cd-header-top">
-        <span class="cd-color-dot" id="cd-dot"></span>
-        <span class="cd-name" id="cd-name"></span>
-        <button class="cd-close" onclick="closeContactModal()">×</button>
-      </div>
-      <div class="cd-header-meta">
-        <span class="cd-cat-label" id="cd-cat-label"></span>
-        <span id="cd-race-chip"></span>
-        <span class="status-badge" id="cd-status-badge"></span>
-      </div>
-    </div>
-    <div class="cd-body">
-      <div class="cd-section">
-        <div class="cd-section-label">Contact Info</div>
-        <div class="cd-info-grid">
-          <div class="cd-info-item"><div class="cd-info-label">Location</div><div class="cd-info-value" id="cd-location"></div></div>
-          <div class="cd-info-item"><div class="cd-info-label">Instagram</div><div class="cd-info-value" id="cd-ig"></div></div>
-          <div class="cd-info-item"><div class="cd-info-label">Phone</div><div class="cd-info-value" id="cd-phone"></div></div>
-          <div class="cd-info-item"><div class="cd-info-label">Email</div><div class="cd-info-value" id="cd-email"></div></div>
-          <div class="cd-info-item"><div class="cd-info-label">Followers</div><div class="cd-info-value" id="cd-followers"></div></div>
-          <div class="cd-info-item"><div class="cd-info-label">Category</div><div class="cd-info-value" id="cd-category"></div></div>
-        </div>
-      </div>
-      <div class="cd-section">
-        <div class="cd-section-label">Notes</div>
-        <textarea class="cd-notes-ta" id="cd-notes-ta" placeholder="Key contact name, relationship, talking points, outreach history…"></textarea>
-        <div class="cd-notes-save-row">
-          <span class="cd-notes-saved" id="cd-notes-saved">Saved ✓</span>
-          <button class="cd-btn primary" onclick="saveContactModalNotes()">Save Notes</button>
-        </div>
-      </div>
-    </div>
-    <div class="cd-footer">
-      <button class="cd-btn" id="cd-cycle-btn" onclick="cycleStatusFromModal()">Advance Status</button>
-      <span class="cd-spacer"></span>
-      <button class="cd-btn" onclick="editFromModal()">Edit</button>
-      <button class="cd-btn danger" onclick="deleteFromModal()">Remove</button>
-    </div>
-  </div>
-</div>
 </body>
 </html>
