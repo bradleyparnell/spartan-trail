@@ -34,8 +34,8 @@
     .race-logos-label{font-size:10px;font-weight:700;color:#555;text-transform:uppercase;letter-spacing:.08em;margin-bottom:7px;display:flex;align-items:center;justify-content:space-between}
     .race-logos-label span{color:#444;font-size:9px;font-weight:400;text-transform:none;letter-spacing:0}
     .race-logos{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
-    .race-logo-chip{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:8px;padding:4px 6px;cursor:pointer;display:flex;align-items:center;gap:5px;transition:all .15s;position:relative}
-    .race-logo-chip img{height:26px;max-width:80px;object-fit:contain;filter:brightness(0) invert(1);opacity:.7;transition:opacity .15s}
+    .race-logo-chip{background:#111;border:1px solid #2a2a2a;border-radius:8px;padding:5px 8px;cursor:pointer;display:flex;align-items:center;gap:5px;transition:all .15s;position:relative}
+    .race-logo-chip img{height:32px;max-width:100px;object-fit:contain;opacity:.8;transition:opacity .15s}
     .race-logo-chip:hover img,.race-logo-chip.active img{opacity:1}
     .race-logo-chip:hover,.race-logo-chip.active{border-color:#81c9c0;background:#1a2a2a}
     .race-logo-chip.active{box-shadow:0 0 0 1px #81c9c0}
@@ -363,6 +363,10 @@
       </div>
     </div>
     <div class="form-row">
+      <label>Website</label>
+      <input type="text" id="f-website" placeholder="example.com"/>
+    </div>
+    <div class="form-row">
       <label>Notes</label>
       <textarea id="f-notes" placeholder="Key contact name, relationship, talking points…"></textarea>
     </div>
@@ -397,6 +401,7 @@
           <div class="cd-info-item"><div class="cd-info-label">Instagram</div><div class="cd-info-value" id="cd-ig"></div></div>
           <div class="cd-info-item"><div class="cd-info-label">Phone</div><div class="cd-info-value" id="cd-phone"></div></div>
           <div class="cd-info-item"><div class="cd-info-label">Email</div><div class="cd-info-value" id="cd-email"></div></div>
+          <div class="cd-info-item"><div class="cd-info-label">Website</div><div class="cd-info-value" id="cd-website"></div></div>
           <div class="cd-info-item"><div class="cd-info-label">Followers</div><div class="cd-info-value" id="cd-followers"></div></div>
           <div class="cd-info-item"><div class="cd-info-label">Category</div><div class="cd-info-value" id="cd-category"></div></div>
         </div>
@@ -469,19 +474,19 @@ function saveRaceData(data){ localStorage.setItem('st_race_data_v1', JSON.string
 function defaultContacts(){
   return [
     { id:'c1',  name:'Fleet Feet San Jose',        category:'running-store',    race:'san-jose',     location:'San Jose, CA',       lat:37.3197, lng:-121.9599, status:'not-contacted', followers:'',     ig:'@fleetfeetsanjose',   phone:'(408) 264-7666', email:'sanjose@fleetfeet.com',   notes:'Local running store, great for race flyers and bib discounts.' },
-    { id:'c2',  name:'Bay Area Trail Runners',     category:'run-club',         race:'san-jose',     location:'San Jose, CA',       lat:37.3382, lng:-121.8863, status:'not-contacted', followers:'4.2K', ig:'@bayareatrailrunners', phone:'',               email:'',                        notes:'' },
+    { id:'c2',  name:'Bay Area Run Crew',          category:'run-club',         race:'san-jose',     location:'San Jose, CA',       lat:37.3382, lng:-121.8863, status:'not-contacted', followers:'4.2K', ig:'@bayarearuncrew',      phone:'',               email:'',                        website:'bayarearuncrew.com', notes:'Meets Tuesdays at San Pedro Square, 87 N San Pedro St, San Jose. Community-focused, all paces welcome.' },
     { id:'c3',  name:'Mike "Dirt Feet" Guerrero',  category:'influencer',       race:'san-jose',     location:'Santa Cruz, CA',     lat:36.9741, lng:-122.0308, status:'not-contacted', followers:'18.3K',ig:'@dirtfeet_mike',       phone:'',               email:'mike@dirtfeet.run',       notes:'Strong trail running content. Local to Santa Cruz Mountains.' },
     { id:'c4',  name:'Elena Vasquez',              category:'influencer',       race:'san-jose',     location:'San Jose, CA',       lat:37.3688, lng:-121.9285, status:'not-contacted', followers:'9.1K', ig:'@elena_runs_trails',   phone:'',               email:'',                        notes:'' },
-    { id:'c5',  name:'Zombie Runner',              category:'running-store',    race:'san-jose',     location:'Palo Alto, CA',      lat:37.4419, lng:-122.143,  status:'not-contacted', followers:'',     ig:'@zombierunner',        phone:'(650) 325-7763', email:'',                        notes:'Ultra-focused running store, long history sponsoring local trail events.' },
-    { id:'c6',  name:'The Fallen Arch',            category:'running-store',    race:'lake-placid',  location:'Lake Placid, NY',    lat:44.2795, lng:-73.9851,  status:'contacted',     followers:'',     ig:'',                     phone:'',               email:'',                        notes:'Owner: Gail Joseph (est. 1999). Also contact Bob Tysen (co-owner, community runner).' },
-    { id:'c7',  name:'High Peaks Cyclery',         category:'outdoor-retail',   race:'lake-placid',  location:'Lake Placid, NY',    lat:44.2804, lng:-73.9901,  status:'contacted',     followers:'2.1K', ig:'@highpeakscyclery',    phone:'',               email:'',                        notes:'Owners: Brian & Karen Delaney (est. 1983). Son Matt also involved. Strong community ties.' },
+    { id:'c5',  name:'Zombie Runner',              category:'running-store',    race:'san-jose',     location:'Palo Alto, CA',      lat:37.4419, lng:-122.143,  status:'not-contacted', followers:'',     ig:'@zombierunner',        phone:'(650) 325-7763', email:'',                        website:'zombierunner.com',  notes:'NOTE: Stopped selling running gear Jan 2020 — now coffee shop only. Still active IG community and sponsor history. Verify before outreach.' },
+    { id:'c6',  name:'The Fallen Arch',            category:'running-store',    race:'lake-placid',  location:'Lake Placid, NY',    lat:44.2795, lng:-73.9851,  status:'contacted',     followers:'',     ig:'@thefallenarch',       phone:'(518) 523-5310', email:'gail@thefallenarch.com',  website:'thefallenarch.com',  notes:'Owner: Gail Joseph (est. 1999). Also contact Bob Tysen (co-owner, community runner). Bob runs free group runs from the store — call to connect.' },
+    { id:'c7',  name:'High Peaks Cyclery',         category:'outdoor-retail',   race:'lake-placid',  location:'Lake Placid, NY',    lat:44.2804, lng:-73.9901,  status:'contacted',     followers:'2.1K', ig:'@highpeakscyclery',    phone:'(518) 523-3764', email:'brian@highpeakscyclery.com', website:'highpeakscyclery.com', notes:'Owners: Brian & Karen Delaney (est. 1983). Son Matt also involved. Strong community ties. Ask for Brian.' },
     { id:'c8',  name:'Adirondack Trail Runners',   category:'run-club',         race:'lake-placid',  location:'Lake Placid, NY',    lat:44.2798, lng:-73.9882,  status:'not-contacted', followers:'1.8K', ig:'@adk_trail_runners',   phone:'',               email:'',                        notes:'' },
     { id:'c9',  name:'Sarah "Summit" Kowalski',    category:'influencer',       race:'lake-placid',  location:'Lake Placid, NY',    lat:44.2839, lng:-73.9944,  status:'not-contacted', followers:'22.4K',ig:'@summitsarah',          phone:'',               email:'sarah@summitrunning.com', notes:'Adirondack-focused content. Strong engagement with trail community.' },
     { id:'c10', name:'Tahoe Adventure Sports',     category:'outdoor-retail',   race:'san-jose',     location:'Santa Cruz, CA',     lat:37.0522, lng:-122.044,  status:'not-contacted', followers:'3.4K', ig:'@tahoeadvsports',      phone:'',               email:'',                        notes:'' },
     { id:'c11', name:'SLC Trail Collective',       category:'trail-org',        race:'wasatch',      location:'Salt Lake City, UT', lat:40.7608, lng:-111.891,  status:'not-contacted', followers:'5.6K', ig:'@slctrailcollective',  phone:'',               email:'',                        notes:'' },
     { id:'c12', name:'Marcus "High Desert" Levin', category:'influencer',       race:'wasatch',      location:'Salt Lake City, UT', lat:40.7554, lng:-111.888,  status:'not-contacted', followers:'14.7K',ig:'@highdesert_marcus',   phone:'',               email:'marcus@highdesert.run',   notes:'Epic alpine content. Good fit for Wasatch Scramble push.' },
     { id:'c13', name:'Pocono Trail Society',       category:'trail-org',        race:'blue-mountain',location:'Stroudsburg, PA',    lat:40.9882, lng:-75.2088,  status:'not-contacted', followers:'2.9K', ig:'@poconotrailsoc',      phone:'',               email:'',                        notes:'' },
-    { id:'c14', name:'WV Trail Alliance',          category:'trail-org',        race:'country-roads',location:'Oak Hill, WV',       lat:37.975,  lng:-81.133,   status:'not-contacted', followers:'1.4K', ig:'@wvtrailalliance',     phone:'',               email:'',                        notes:'' },
+    { id:'c14', name:'WV Trail Alliance',          category:'trail-org',        race:'country-roads',location:'Oak Hill, WV',       lat:37.975,  lng:-81.133,   status:'not-contacted', followers:'1.4K', ig:'@wvtrailalliance',     phone:'',               email:'info@wvtrail.org',        website:'wvtrail.org',        notes:'Closest verified match: WV Trail Network (statewide trail org). Confirm IG account before outreach.' },
     { id:'c15', name:'Golden Gate Trail Crew',     category:'run-club',         race:'golden-gate',  location:'San Francisco, CA',  lat:37.7749, lng:-122.4194, status:'not-contacted', followers:'6.2K', ig:'@ggtrailcrew',         phone:'',               email:'',                        notes:'' },
   ];
 }
@@ -813,7 +818,7 @@ function openEditModal(id){
   const c=contacts.find(x=>x.id===id); if(!c) return;
   document.getElementById('modal-title').textContent='Edit Contact';
   document.getElementById('edit-id').value=id;
-  ['name','location','phone','email','ig','followers','notes'].forEach(f=>document.getElementById('f-'+f).value=c[f]||'');
+  ['name','location','phone','email','ig','followers','website','notes'].forEach(f=>document.getElementById('f-'+f).value=c[f]||'');
   document.getElementById('f-category').value=c.category||'other';
   document.getElementById('f-status').value=c.status||'not-contacted';
   document.getElementById('f-race').value=c.race||'';
@@ -840,6 +845,7 @@ function saveContact(){
     email:   document.getElementById('f-email').value.trim(),
     ig:      document.getElementById('f-ig').value.trim(),
     followers:document.getElementById('f-followers').value.trim(),
+    website: document.getElementById('f-website').value.trim(),
     notes:   document.getElementById('f-notes').value.trim(),
   };
   if(id){ const idx=contacts.findIndex(c=>c.id===id); if(idx>-1) contacts[idx]=obj; else contacts.push(obj); }
@@ -878,6 +884,7 @@ function openContactModal(id){
   setVal('cd-ig', c.ig, c.ig ? 'https://instagram.com/'+c.ig.replace('@','') : '');
   setVal('cd-phone', c.phone, c.phone ? 'tel:'+c.phone : '');
   setVal('cd-email', c.email, c.email ? 'mailto:'+c.email : '');
+  setVal('cd-website', c.website, c.website ? 'https://'+c.website.replace(/^https?:\/\//,'') : '');
   setVal('cd-followers', c.followers);
   setVal('cd-category', cat.label);
   document.getElementById('cd-notes-ta').value = c.notes || '';
