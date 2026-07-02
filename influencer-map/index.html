@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Spartan Trail — Influencer Map</title>
+
+  <!-- Leaflet -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <!-- DaisyUI + Tailwind -->
+  <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet"/>
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    html, body { margin:0; padding:0; height:100%; background:#131313; }
+    #root { display:flex; height:100vh; overflow:hidden; }
+
+    /* Spartan Trail Dark Theme */
+    :root { --teal:#81c9c0; --bg:#131313; --surface:#1c1c1c; --border:#272727; --text:#e2e2e2; --muted:#888; }
+    body { background:var(--bg) !important; color:var(--text); }
+    .bg-surface { background:var(--surface); }
+    .border-st { border-color:var(--border) !important; }
+    .text-teal { color:var(--teal); }
+
+    /* Sidebar */
+    #sidebar { width:320px; min-width:320px; display:flex; flex-direction:column; background:var(--bg); border-right:1px solid var(--border); z-index:10; }
+    #map { flex:1; }
+
+    /* Cards */
+    .inf-card { background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:12px; margin-bottom:8px; cursor:pointer; transition:border-color .15s; }
+    .inf-card:hover, .inf-card.selected { border-color:var(--teal); }
+    .inf-card.selected { background:#1f2d2c; }
+
+    /* Inputs */
+    input[type="text"], input[type="number"], select, textarea {
+      background:var(--surface) !important; border:1px solid var(--border) !important;
+      color:var(--text) !important; border-radius:6px; padding:6px 10px; width:100%; font-size:13px;
+    }
+    input:focus, select:focus, textarea:focus { outline:none; border-color:var(--teal) !important; }
+    input::placeholder { color:#555; }
+    label { font-size:11px; color:#aaa; display:block; margin-bottom:3px; }
+
+    /* Tabs */
+    .tab-btn { padding:5px 14px; border-radius:5px; font-size:12px; font-weight:600; cursor:pointer; border:none; transition:.15s; }
+    .tab-btn.active { background:var(--teal); color:#131313; }
+    .tab-btn:not(.active) { background:transparent; color:#888; }
+
+    /* Buttons */
+    .btn-teal { background:var(--teal); color:#131313; border:none; border-radius:6px; padding:6px 14px; font-size:12px; font-weight:700; cursor:pointer; }
+    .btn-teal:hover { background:#6ab8af; }
+    .btn-ghost-sm { background:transparent; color:#aaa; border:1px solid var(--border); border-radius:6px; padding:4px 10px; font-size:11px; cursor:pointer; }
+    .btn-ghost-sm:hover { background:var(--surface); }
+
+    /* Badges */
+    .badge { display:inline-block; padding:2px 7px; border-radius:99px; font-size:10px; font-weight:700; }
+    .badge-teal { background:var(--teal); color:#131313; }
+    .badge-amber { background:#f59e0b; color:#131313; }
+    .badge-orange { background:#fb923c; color:#131313; }
+    .badge-ghost { background:#272727; color:#aaa; }
+    .badge-outline-teal { border:1px solid var(--teal); color:var(--teal); background:transparent; }
+
+    /* Modal */
+    .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,.7); z-index:1000; display:flex; align-items:center; justify-content:center; }
+    .modal-box { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:24px; width:480px; max-width:95vw; max-height:90vh; overflow-y:auto; }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width:4px; }
+    ::-webkit-scrollbar-track { background:var(--bg); }
+    ::-webkit-scrollbar-thumb { background:#333; border-radius:2px; }
+
+    /* Leaflet overrides */
+    .leaflet-popup-content-wrapper { background:#1c1c1c !important; color:#e2e2e2 !important; border:1px solid #272727; box-shadow:0 4px 20px rgba(0,0,0,.6) !important; }
+    .leaflet-popup-tip { background:#1c1c1c !important; }
+    .leaflet-popup-content b { color:#81c9c0; }
+    .leaflet-control-zoom a { background:#1c1c1c !important; color:#81c9c0 !important; border-color:#272727 !important; }
+    .leaflet-control-attribution { background:rgba(19,19,19,.8) !important; color:#555 !important; }
+    .leaflet-control-attribution a { color:#81c9c0 !important; }
+
+    .range-input { accent-color:var(--teal); width:100%; }
+    .divider { border-color:var(--border); }
+  </style>
+</head>
+<body>
+<div id="root"></div>
+
+<script>
+// ─── Data ──────────────────────────────────────────────────────────────────────
+
+const RACES = [
+  { id:1,  name:'WHITEWATER TRAIL CHALLENGE',  location:'Whitewater, WI',              date:'Jun 20, 2026',     lat:42.8339,  lng:-88.7323,  target:null },
+  { id:2,  name:'BLUE MOUNTAIN TRAIL RUN',     location:'Blue Mountain Ski Area, PA',  date:'Jul 12, 2026',     lat:40.7972,  lng:-75.5468,  target:null },
+  { id:3,  name:'WASATCH SCRAMBLE TRAIL RUN',  location:'Huntsville, UT',              date:'Jul 12, 2026',     lat:41.0269,  lng:-111.7799, target:null },
+  { id:4,  name:'LAKE PLACID TRAIL CHALLENGE', location:'Mt Van Hoevenberg, NY',       date:'Aug 8, 2026',      lat:44.2641,  lng:-73.9876,  target:600 },
+  { id:5,  name:'CALABOGIE PEAKS TRAIL RUN',   location:'Calabogie, Ontario, Canada',  date:'Aug 23, 2026',     lat:45.3009,  lng:-76.7392,  target:null },
+  { id:6,  name:'COUNTRY ROADS TRAIL RUN',     location:'Oak Hill, WV',                date:'Aug 30, 2026',     lat:37.9737,  lng:-81.1484,  target:null },
+  { id:7,  name:'SAN JOSE TRAIL CHALLENGE',    location:'Saratoga, CA',                date:'Sep 27, 2026',     lat:37.2638,  lng:-122.0230, target:600 },
+  { id:8,  name:'RANCHO RAMBLE TRAIL RUN',     location:'California (TBD)',            date:'Nov 8, 2026',      lat:34.1066,  lng:-117.5931, target:null },
+  { id:9,  name:'GOLDEN GATE TRAIL CLASSIC',   location:'San Francisco, CA',           date:'Jan 23–24, 2027',  lat:37.8199,  lng:-122.4783, target:1000 },
+  { id:10, name:'GEORGIA GRIT TRAIL RUN',      location:'Conyers, GA',                 date:'Mar 14, 2027',     lat:33.6629,  lng:-84.0008,  target:null },
+  { id:11, name:'TORO PARK TRAIL RUN',         location:'Salinas, CA',                 date:'May 30, 2027',     lat:36.5741,  lng:-121.6902, target:null },
+];
+
+const SEED_INFLUENCERS = [
+  { name:'Coree Woltering',   handle:'@coreewoltering',   followers:13000, location:'Chicago, IL',        lat:41.8781, lng:-87.6298,  tags:'midwest,ultramarathon,fkt',         instagram:'https://instagram.com/coreewoltering',  notes:'90 miles from Whitewater. Midwest FKT runner with a loyal local following.', priority:1 },
+  { name:'Beth Shutt',        handle:'@bethshutttrails',  followers:5200,  location:'Lehighton, PA',      lat:40.8340, lng:-75.7135,  tags:'pa,local,trail,women',              instagram:'https://instagram.com/bethshutttrails',  notes:'Lehighton PA — 10 miles from Blue Mountain Ski Area. Hyper-local Poconos audience.', priority:1 },
+  { name:'Mario Mendoza',     handle:'@mario_trails',     followers:7400,  location:'Salt Lake City, UT', lat:40.7608, lng:-111.8910, tags:'utah,desert,trail,mountain',        instagram:'https://instagram.com/mario_trails',     notes:'SLC — 30 miles from Huntsville. Loyal local Utah trail audience.', priority:1 },
+  { name:'Alex Nichols',      handle:'@alexdnichols',     followers:9500,  location:'Colorado Springs, CO',lat:38.8339,lng:-104.8214, tags:'colorado,mountain,elite,pikes-peak', instagram:'https://instagram.com/alexdnichols',     notes:'Elite Pikes Peak racer. Strong Mountain West audience. Closest: Wasatch.', priority:2 },
+  { name:'Kelly McNulty',     handle:'@kellymcnulty_tri', followers:12000, location:'Plattsburgh, NY',    lat:44.6995, lng:-73.4529,  tags:'adirondacks,northeast,endurance,women', instagram:'https://instagram.com/kellymcnulty_tri', notes:'30 miles from Lake Placid. Adirondacks-based endurance athlete.', priority:1 },
+  { name:'Mirna Valerio',     handle:'@themirnavator',    followers:31000, location:'Burlington, VT',     lat:44.4759, lng:-73.2121,  tags:'diversity,trail,community,women',   instagram:'https://instagram.com/themirnavator',    notes:'Vermont-based, 100 miles from Lake Placid. Most recognized voice in inclusive trail running.', priority:1 },
+  { name:'Alissa St Laurent', handle:'@alissastlaurent',  followers:22000, location:'Ottawa, ON, Canada', lat:45.4215, lng:-75.6972,  tags:'elite,canada,trail,women',          instagram:'https://instagram.com/alissastlaurent',  notes:'Ottawa-based elite. 50 miles from Calabogie. Top trail women in North America.', priority:1 },
+  { name:'Cat Bradley',       handle:'@runcat',           followers:14000, location:'Asheville, NC',      lat:35.5951, lng:-82.5515,  tags:'appalachian,southeast,trail,women', instagram:'https://instagram.com/runcat',           notes:'Asheville — 2 hrs from Oak Hill WV. Appalachian trail runner, highly engaged SE following.', priority:1 },
+  { name:'Caroline Boller',   handle:'@carolineboller',   followers:11500, location:'San Francisco, CA',  lat:37.7749, lng:-122.4194, tags:'bayarea,marin,trail,women',         instagram:'https://instagram.com/carolineboller',   notes:'SF Bay Area. 40 miles from Saratoga, 10 miles from Golden Gate. Covers both CA races.', priority:1 },
+  { name:'Megan Roche',       handle:'@megan_roche',      followers:9800,  location:'Santa Cruz, CA',     lat:36.9741, lng:-122.0308, tags:'california,coach,trail,women',      instagram:'https://instagram.com/megan_roche',      notes:'Santa Cruz-based elite and coach. 45 miles from Toro Park, 60 from Saratoga.', priority:1 },
+  { name:'Jamil Coury',       handle:'@jamilcoury',       followers:21000, location:'Scottsdale, AZ',     lat:33.4942, lng:-111.9261, tags:'racedr,community,southwest',        instagram:'https://instagram.com/jamilcoury',       notes:'Co-founder Aravaipa Running. Closest to SoCal Rancho Ramble. Massive OCR-adjacent community.', priority:1 },
+  { name:'Mackenzie Havey',   handle:'@mkhavey',          followers:14000, location:'Atlanta, GA',        lat:33.7490, lng:-84.3880,  tags:'southeast,author,trail,women',      instagram:'https://instagram.com/mkhavey',          notes:'Atlanta-based running author. 30 miles from Georgia International Horse Park.', priority:1 },
+  { name:'Keely Henninger',   handle:'@keelyhenninger',   followers:16000, location:'Portland, OR',       lat:45.5051, lng:-122.6750, tags:'elite,pnw,up-and-coming',           instagram:'https://instagram.com/keelyhenninger',   notes:'Rising PNW elite with Nike-adjacent audience. Closest: Golden Gate Trail Classic.', priority:1 },
+  { name:'Addie Bracy',       handle:'@addiebracy',       followers:28000, location:'Boulder, CO',        lat:40.0150, lng:-105.2705, tags:'mental-health,relatable,trail,women',instagram:'https://instagram.com/addiebracy',       notes:'Mental health advocate and elite trail runner. Closest: Wasatch Scramble.', priority:1 },
+  { name:'Brendan Leonard',   handle:'@semi_rad',         followers:32000, location:'Denver, CO',         lat:39.7392, lng:-104.9903, tags:'outdoor,storytelling,humor,content', instagram:'https://instagram.com/semi_rad',         notes:'Adventure writer/filmmaker. National outdoor audience. Closest: Wasatch Scramble.', priority:2 },
+];
+
+// ─── Storage ───────────────────────────────────────────────────────────────────
+
+function loadInfluencers() {
+  const stored = localStorage.getItem('st_influencers');
+  if (stored) return JSON.parse(stored);
+  const data = SEED_INFLUENCERS.map((s, i) => ({ ...s, id: i + 1 }));
+  saveInfluencers(data);
+  return data;
+}
+
+function saveInfluencers(data) {
+  localStorage.setItem('st_influencers', JSON.stringify(data));
+}
+
+// ─── Helpers ───────────────────────────────────────────────────────────────────
+
+function haversineMiles(lat1, lng1, lat2, lng2) {
+  const R = 3958.8;
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLng = (lng2 - lng1) * Math.PI / 180;
+  const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLng/2)**2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+}
+
+function fmtFollowers(n) {
+  if (n >= 1000000) return (n/1000000).toFixed(1)+'M';
+  if (n >= 1000) return (n/1000).toFixed(1)+'K';
+  return n.toString();
+}
+
+function nearestRace(inf) {
+  let best = { race: RACES[0], miles: Infinity };
+  RACES.forEach(r => {
+    const miles = haversineMiles(inf.lat, inf.lng, r.lat, r.lng);
+    if (miles < best.miles) best = { race: r, miles };
+  });
+  return best;
+}
+
+// ─── App State ─────────────────────────────────────────────────────────────────
+
+let state = {
+  influencers: loadInfluencers(),
+  search: '',
+  minFollowers: 0,
+  selectedRace: null,
+  maxMiles: 500,
+  selectedInf: null,
+  showAdd: false,
+  showFilters: false,
+  activeTab: 'all',   // 'all' | 'high'
+  addForm: { name:'', handle:'', followers:'', location:'', lat:'', lng:'', tags:'', instagram:'', notes:'', priority:'1' },
+};
+
+let map = null;
+let influencerMarkers = {};
+
+// ─── Map ───────────────────────────────────────────────────────────────────────
+
+function initMap() {
+  map = L.map('map', { center: [38, -96], zoom: 4 });
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+    attribution: '&copy; OpenStreetMap &copy; CARTO',
+    subdomains: 'abcd', maxZoom: 19,
+  }).addTo(map);
+
+  RACES.forEach(race => {
+    const icon = L.divIcon({
+      className: '',
+      html: `<div style="width:13px;height:13px;border-radius:50%;background:#81c9c0;border:2px solid #fff;box-shadow:0 0 5px rgba(0,0,0,.6)"></div>`,
+      iconSize: [13, 13], iconAnchor: [6, 6],
+    });
+    L.marker([race.lat, race.lng], { icon }).addTo(map)
+      .bindPopup(`<b style="font-size:13px">${race.name}</b><br/>${race.location}<br/><i style="color:#888">${race.date}</i>${race.target ? `<br/>Target: <b>${race.target.toLocaleString()} runners</b>` : ''}`)
+      .on('click', () => { state.selectedRace = race; state.showFilters = true; render(); });
+  });
+
+  updateInfluencerMarkers();
+}
+
+function updateInfluencerMarkers() {
+  if (!map) return;
+  Object.values(influencerMarkers).forEach(m => map.removeLayer(m));
+  influencerMarkers = {};
+
+  state.influencers.forEach(inf => {
+    if (!inf.lat || !inf.lng) return;
+    const sz = inf.followers >= 25000 ? 14 : inf.followers >= 10000 ? 11 : 8;
+    const color = inf.priority === 1 ? '#f59e0b' : '#fb923c';
+    const icon = L.divIcon({
+      className: '',
+      html: `<div style="width:${sz}px;height:${sz}px;border-radius:50%;background:${color};border:2px solid #fff;box-shadow:0 0 4px rgba(0,0,0,.5)"></div>`,
+      iconSize: [sz, sz], iconAnchor: [sz/2, sz/2],
+    });
+    const nr = nearestRace(inf);
+    const m = L.marker([inf.lat, inf.lng], { icon }).addTo(map)
+      .bindPopup(`<b>${inf.name}</b><br/>${inf.handle}<br/>${fmtFollowers(inf.followers)} followers<br/>${inf.location}<br/>Nearest: <b>${nr.race.name}</b> (${Math.round(nr.miles)} mi)`)
+      .on('click', () => { state.selectedInf = inf.id; render(); });
+    influencerMarkers[inf.id] = m;
+  });
+}
+
+function flyToInf(inf) {
+  if (!map || !inf.lat || !inf.lng) return;
+  map.flyTo([inf.lat, inf.lng], 8, { duration: 1 });
+  influencerMarkers[inf.id]?.openPopup();
+}
+
+// ─── Render ────────────────────────────────────────────────────────────────────
+
+function filteredInfluencers() {
+  return state.influencers.filter(inf => {
+    if (state.activeTab === 'high' && inf.priority !== 1) return false;
+    const q = state.search.toLowerCase();
+    if (q && !inf.name.toLowerCase().includes(q) && !inf.handle.toLowerCase().includes(q)) return false;
+    if (inf.followers < state.minFollowers) return false;
+    if (state.selectedRace) {
+      const miles = haversineMiles(inf.lat, inf.lng, state.selectedRace.lat, state.selectedRace.lng);
+      if (miles > state.maxMiles) return false;
+    }
+    return true;
+  });
+}
+
+function renderSidebar() {
+  const filtered = filteredInfluencers();
+  const sidebar = document.getElementById('sidebar');
+
+  sidebar.innerHTML = `
+    <!-- Header -->
+    <div style="background:#131313;border-bottom:1px solid #272727;padding:12px 14px 10px">
+      <img src="https://www.spartantrail.com/wp-content/themes/yootheme/cache/75/st_logo_white-756db7dd.webp"
+        alt="Spartan Trail" style="height:30px;display:block;margin-bottom:10px"/>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="font-size:11px;font-weight:700;letter-spacing:.08em;color:#81c9c0;text-transform:uppercase">Influencer Map</span>
+          <span class="badge badge-teal">${state.influencers.length}</span>
+        </div>
+        <button class="btn-teal" onclick="openAdd()">+ Add</button>
+      </div>
+      <input type="text" placeholder="Search name or @handle" value="${state.search.replace(/"/g,'&quot;')}"
+        oninput="state.search=this.value;render()" style="margin-bottom:8px"/>
+      <div style="display:flex;gap:4px;background:#1c1c1c;padding:4px;border-radius:7px">
+        <button class="tab-btn ${state.activeTab==='all'?'active':''}" onclick="state.activeTab='all';render()">All</button>
+        <button class="tab-btn ${state.activeTab==='high'?'active':''}" onclick="state.activeTab='high';render()">⭐ High Priority</button>
+      </div>
+    </div>
+
+    <!-- Filters toggle -->
+    <div style="border-bottom:1px solid #272727">
+      <button onclick="state.showFilters=!state.showFilters;render()"
+        style="display:flex;align-items:center;justify-content:space-between;width:100%;padding:10px 14px;background:transparent;border:none;color:#aaa;font-size:13px;cursor:pointer">
+        <span>🔍 Filters ${state.selectedRace ? `<span class="badge badge-outline-teal" style="margin-left:4px">${state.selectedRace.name.split(' ').slice(0,2).join(' ')}</span>` : ''}</span>
+        <span>${state.showFilters ? '▲' : '▼'}</span>
+      </button>
+      ${state.showFilters ? `
+      <div style="padding:0 14px 12px;display:flex;flex-direction:column;gap:10px">
+        <div>
+          <label>Min Followers: ${state.minFollowers >= 1000 ? (state.minFollowers/1000).toFixed(0)+'K' : state.minFollowers}</label>
+          <input type="range" class="range-input" min="0" max="40000" step="1000" value="${state.minFollowers}"
+            oninput="state.minFollowers=Number(this.value);render()"/>
+          <div style="display:flex;justify-content:space-between;font-size:10px;color:#555"><span>0</span><span>40K</span></div>
+        </div>
+        <div>
+          <label>Filter by Race</label>
+          <select onchange="selectRace(this.value)">
+            <option value="">All Locations</option>
+            ${RACES.map(r => `<option value="${r.id}" ${state.selectedRace?.id===r.id?'selected':''}>${r.name} — ${r.location}</option>`).join('')}
+          </select>
+        </div>
+        ${state.selectedRace ? `
+        <div>
+          <label>Within ${state.maxMiles} miles of ${state.selectedRace.name.split(' ').slice(0,3).join(' ')}</label>
+          <input type="range" class="range-input" min="50" max="1500" step="50" value="${state.maxMiles}"
+            oninput="state.maxMiles=Number(this.value);render()"/>
+          <div style="display:flex;justify-content:space-between;font-size:10px;color:#555"><span>50mi</span><span>1500mi</span></div>
+        </div>` : ''}
+        ${(state.selectedRace || state.minFollowers>0) ? `<button class="btn-ghost-sm" onclick="clearFilters()">Clear filters</button>` : ''}
+      </div>` : ''}
+    </div>
+
+    <!-- List -->
+    <div style="flex:1;overflow-y:auto;padding:10px 10px 4px">
+      ${filtered.length === 0
+        ? `<div style="text-align:center;color:#555;font-size:13px;padding:32px 0">No influencers match these filters</div>`
+        : filtered.map(inf => {
+            const nr = nearestRace(inf);
+            const sel = state.selectedInf === inf.id;
+            return `
+            <div class="inf-card ${sel?'selected':''}" onclick="selectInf(${inf.id})">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">
+                <div style="flex:1;min-width:0">
+                  <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+                    <span style="font-size:13px;font-weight:600;color:#e2e2e2">${inf.name}</span>
+                    <span class="badge ${inf.priority===1?'badge-amber':'badge-orange'}">${inf.priority===1?'High Priority':'Outreach'}</span>
+                  </div>
+                  <div style="font-size:11px;color:#666">${inf.handle}</div>
+                </div>
+                <div style="text-align:right;flex-shrink:0">
+                  <div style="font-size:14px;font-weight:700;color:#81c9c0">${fmtFollowers(inf.followers)}</div>
+                  <div style="font-size:10px;color:#555">followers</div>
+                </div>
+              </div>
+              <div style="font-size:11px;color:#666;margin-top:4px">📍 ${inf.location}</div>
+              <div style="margin-top:5px">
+                <span class="badge badge-outline-teal">Nearest: ${nr.race.name.split(' ').slice(0,3).join(' ')} (${Math.round(nr.miles)} mi)</span>
+              </div>
+              ${inf.notes ? `<div style="font-size:11px;color:#555;font-style:italic;margin-top:4px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical">${inf.notes}</div>` : ''}
+              ${inf.tags ? `<div style="display:flex;flex-wrap:wrap;gap:3px;margin-top:4px">${inf.tags.split(',').map(t=>`<span class="badge badge-ghost">${t.trim()}</span>`).join('')}</div>` : ''}
+              ${inf.instagram ? `<div style="margin-top:6px"><a href="${inf.instagram}" target="_blank" style="font-size:11px;color:#81c9c0;text-decoration:none">↗ Instagram</a></div>` : ''}
+            </div>`;
+          }).join('')}
+    </div>
+
+    <!-- Legend -->
+    <div style="padding:10px 14px;border-top:1px solid #272727;background:#1c1c1c;font-size:11px;color:#666">
+      <div style="display:flex;gap:12px;flex-wrap:wrap">
+        <span>🔵 Race location</span>
+        <span>🟡 High Priority</span>
+        <span>🟠 Outreach</span>
+      </div>
+      <div style="margin-top:3px">Dot size = follower count. Click any pin for details.</div>
+    </div>
+  `;
+}
+
+function renderModal() {
+  const existing = document.getElementById('add-modal');
+  if (existing) existing.remove();
+
+  if (!state.showAdd) return;
+
+  const f = state.addForm;
+  const el = document.createElement('div');
+  el.id = 'add-modal';
+  el.className = 'modal-overlay';
+  el.innerHTML = `
+    <div class="modal-box" onclick="event.stopPropagation()">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+        <h3 style="margin:0;font-size:16px;font-weight:700;color:#e2e2e2">Add Influencer</h3>
+        <button onclick="closeAdd()" style="background:transparent;border:none;color:#aaa;cursor:pointer;font-size:20px;line-height:1">×</button>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div style="grid-column:span 2">
+          <label>Name *</label>
+          <input type="text" id="af-name" value="${f.name}" placeholder="Full name"/>
+        </div>
+        <div>
+          <label>Instagram Handle *</label>
+          <input type="text" id="af-handle" value="${f.handle}" placeholder="@handle"/>
+        </div>
+        <div>
+          <label>Followers</label>
+          <input type="number" id="af-followers" value="${f.followers}" placeholder="e.g. 12000"/>
+        </div>
+        <div style="grid-column:span 2">
+          <label>Location</label>
+          <input type="text" id="af-location" value="${f.location}" placeholder="City, State"/>
+        </div>
+        <div>
+          <label>Latitude</label>
+          <input type="number" id="af-lat" value="${f.lat}" placeholder="e.g. 40.015" step="any"/>
+        </div>
+        <div>
+          <label>Longitude</label>
+          <input type="number" id="af-lng" value="${f.lng}" placeholder="e.g. -105.27" step="any"/>
+        </div>
+        <div style="grid-column:span 2">
+          <label>Tags (comma-separated)</label>
+          <input type="text" id="af-tags" value="${f.tags}" placeholder="trail,local,women"/>
+        </div>
+        <div style="grid-column:span 2">
+          <label>Instagram URL</label>
+          <input type="text" id="af-instagram" value="${f.instagram}" placeholder="https://instagram.com/..."/>
+        </div>
+        <div style="grid-column:span 2">
+          <label>Notes</label>
+          <textarea id="af-notes" rows="3" placeholder="Why this person?">${f.notes}</textarea>
+        </div>
+        <div>
+          <label>Priority</label>
+          <select id="af-priority">
+            <option value="1" ${f.priority==='1'?'selected':''}>High Priority</option>
+            <option value="2" ${f.priority==='2'?'selected':''}>Outreach</option>
+          </select>
+        </div>
+      </div>
+      <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:16px">
+        <button class="btn-ghost-sm" onclick="closeAdd()">Cancel</button>
+        <button class="btn-teal" onclick="saveInfluencer()">Save</button>
+      </div>
+    </div>
+  `;
+  el.addEventListener('click', closeAdd);
+  document.body.appendChild(el);
+}
+
+function render() {
+  renderSidebar();
+  renderModal();
+}
+
+// ─── Actions ───────────────────────────────────────────────────────────────────
+
+function selectInf(id) {
+  state.selectedInf = state.selectedInf === id ? null : id;
+  const inf = state.influencers.find(i => i.id === id);
+  if (inf && state.selectedInf === id) flyToInf(inf);
+  render();
+}
+
+function selectRace(id) {
+  const r = RACES.find(r => r.id === Number(id));
+  state.selectedRace = r || null;
+  if (r && map) map.flyTo([r.lat, r.lng], 6, { duration: 1 });
+  render();
+}
+
+function clearFilters() {
+  state.selectedRace = null;
+  state.minFollowers = 0;
+  state.maxMiles = 500;
+  render();
+}
+
+function openAdd() { state.showAdd = true; render(); }
+function closeAdd() { state.showAdd = false; render(); }
+
+function saveInfluencer() {
+  const name = document.getElementById('af-name').value.trim();
+  const handle = document.getElementById('af-handle').value.trim();
+  if (!name || !handle) { alert('Name and handle are required.'); return; }
+
+  const newInf = {
+    id: Math.max(0, ...state.influencers.map(i => i.id)) + 1,
+    name,
+    handle,
+    followers: parseInt(document.getElementById('af-followers').value) || 0,
+    location: document.getElementById('af-location').value.trim(),
+    lat: parseFloat(document.getElementById('af-lat').value) || 0,
+    lng: parseFloat(document.getElementById('af-lng').value) || 0,
+    tags: document.getElementById('af-tags').value.trim(),
+    instagram: document.getElementById('af-instagram').value.trim(),
+    notes: document.getElementById('af-notes').value.trim(),
+    priority: parseInt(document.getElementById('af-priority').value) || 2,
+  };
+
+  state.influencers.push(newInf);
+  saveInfluencers(state.influencers);
+  updateInfluencerMarkers();
+  state.showAdd = false;
+  state.addForm = { name:'', handle:'', followers:'', location:'', lat:'', lng:'', tags:'', instagram:'', notes:'', priority:'1' };
+  render();
+}
+
+// ─── Init ──────────────────────────────────────────────────────────────────────
+
+document.getElementById('root').innerHTML = `
+  <div id="sidebar"></div>
+  <div id="map"></div>
+`;
+
+render();
+initMap();
+</script>
+</body>
+</html>
