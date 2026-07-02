@@ -459,10 +459,26 @@ const STATUS_ORDER = {'not-contacted':0,'contacted':1,'responded':2,'confirmed':
 
 // ── CONTACT STORAGE ────────────────────────────────────────────────────
 function loadContacts(){
-  try{ return JSON.parse(localStorage.getItem('st_contacts_v2')||'null') || defaultContacts(); }
+  try{
+    const v3 = JSON.parse(localStorage.getItem('st_contacts_v3')||'null');
+    if(v3) return v3;
+    // Migrate from v2: merge seed with any existing edits
+    const seed = defaultContacts();
+    const v2 = JSON.parse(localStorage.getItem('st_contacts_v2')||'null');
+    if(v2 && Array.isArray(v2)){
+      // Keep seed as base; overlay status/notes from v2 where IDs match; append any v2-only contacts
+      const seedIds = new Set(seed.map(c=>c.id));
+      const v2Map = {};
+      v2.forEach(c=>{ v2Map[c.id]=c; });
+      const merged = seed.map(c=>{ const old=v2Map[c.id]; return old ? Object.assign({},c,{status:old.status||c.status,notes:old.notes||c.notes}) : c; });
+      v2.forEach(c=>{ if(!seedIds.has(c.id)) merged.push(c); });
+      return merged;
+    }
+    return seed;
+  }
   catch(e){ return defaultContacts(); }
 }
-function saveContacts(arr){ localStorage.setItem('st_contacts_v2', JSON.stringify(arr)); }
+function saveContacts(arr){ localStorage.setItem('st_contacts_v3', JSON.stringify(arr)); }
 
 // ── RACE DATA STORAGE ──────────────────────────────────────────────────
 function loadRaceData(){
