@@ -56,7 +56,7 @@
       .faq-wrap{gap:27px}.faq-q{padding:19px 0;font-size:.91rem;line-height:1.4;align-items:flex-start}.faq-q span:last-child{line-height:1}.faq-a p{padding:0 16px 19px 0;line-height:1.5}
       .apply{padding:65px 0}.apply-grid{gap:26px}.apply-copy p{font-size:.96rem;line-height:1.5}.apply:before{width:340px;left:-140px;bottom:-85px}.form{padding:24px 18px}.form-grid{gap:13px}.field input,.field select{padding:13px}.form .button{min-height:51px}
       footer{padding:30px 0}.footer-grid{gap:16px;align-items:center;text-align:center}.footer-mark{font-size:1.12rem}.footer-mark img{width:31px;height:31px}.footer-note{line-height:1.5}
-      .mobile-cta{min-height:70px;align-items:center;padding:8px 10px calc(8px + env(safe-area-inset-bottom));background:rgba(7,7,7,.96);backdrop-filter:blur(14px);box-shadow:0 -8px 24px rgba(0,0,0,.28)}.mobile-cta .button{min-height:46px;line-height:1.15;font-size:.59rem;letter-spacing:.075em}.mobile-cta .button.outline{background:#181818}
+      .mobile-cta{min-height:70px;align-items:center;padding:8px 10px calc(8px + env(safe-area-inset-bottom));background:rgba(7,7,7,.97);backdrop-filter:blur(14px);border-top:1px solid #2b2b2b;box-shadow:0 -8px 24px rgba(0,0,0,.28)}.mobile-cta .button,.mobile-cta .button.outline{min-height:46px;line-height:1.15;font-size:.59rem;letter-spacing:.075em;background:#121212;color:#fff;border:1px solid #444}.mobile-cta .button .arrow{color:var(--red2);font-size:1rem;margin-left:5px}
       @media(hover:none){.card:hover,.feature:hover,.button:hover{transform:none;box-shadow:none}}
     }
     @media(max-width:350px){.brand-primary{font-size:.76rem}.brand-partner-name{font-size:.57rem}.brand-powered{font-size:.62rem}.brand-lockup,.brand-partner{gap:5px}.checklist{grid-template-columns:1fr}.paths-head h2,.gym-copy h2{font-size:2.1rem}.mobile-cta .button{font-size:.55rem}}
@@ -177,7 +177,7 @@
   </main>
 
   <footer><div class="wrap footer-grid"><div class="footer-mark"><img src="./assets/spartan-helmet.svg" alt="" /> <span>SPARTAN DEKA <span class="red">×</span> ADAPT OR DIE</span></div><div class="footer-note">Concept landing page for discussion purposes. DEKA and Spartan marks belong to their respective owners. Offer details, claims, pricing, and partnership terms require final approval before public launch.</div></div></footer>
-  <div class="mobile-cta" id="mobile-cta" aria-label="Choose your path"><a class="button" href="#current-affiliate" data-status="Current DEKA affiliate">I’m an affiliate</a><a class="button outline" href="#future-affiliate" data-status="Considering DEKA affiliation">Considering DEKA</a></div>
+  <div class="mobile-cta" id="mobile-cta" aria-label="Choose your path"><a class="button" href="#current-affiliate" data-status="Current DEKA affiliate">I’m an affiliate <span class="arrow">→</span></a><a class="button outline" href="#future-affiliate" data-status="Considering DEKA affiliation">Considering DEKA</a></div>
 
   <script>
     document.querySelectorAll('.faq-q').forEach((button)=>button.addEventListener('click',()=>button.parentElement.classList.toggle('open')));
