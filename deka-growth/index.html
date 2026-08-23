@@ -4,6 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="description" content="DEKA Growth equips gym owners with AI, CRM, automation, coaching, and support to convert more leads, retain more members, and grow." />
+  <meta name="theme-color" content="#070707" />
   <title>DEKA Growth | Equip Your Gym to Grow</title>
   <style>
     :root{
@@ -34,7 +35,31 @@
     .reveal{opacity:0;transform:translateY(20px);transition:.65s ease}.reveal.visible{opacity:1;transform:none}
     @media(max-width:900px){.navlinks a:not(.button){display:none}.hero{min-height:760px;background-position:62% center}.section-head,.platform-grid,.gym-grid,.offer-box,.faq-wrap,.apply-grid{grid-template-columns:1fr}.cards,.feature-grid{grid-template-columns:1fr 1fr}.step-grid{grid-template-columns:1fr}.gym-image{min-height:440px}.offer-list{columns:1}.price-side,.offer-details{padding:42px}.faq-wrap{gap:35px}.apply-grid{gap:35px}}
     @media(max-width:620px){body{padding-bottom:68px}.wrap{width:min(100% - 26px,1180px)}.nav{height:64px;background:rgba(0,0,0,.72);backdrop-filter:blur(10px)}.brand img{height:32px;width:32px}.brand-x,.brand-sub{display:none}.brand-main{font-size:.96rem}.nav .button{display:none}.hero{padding:105px 0 52px;min-height:680px;background-position:66% center}.hero:after{display:none}.hero:before{right:-55px;top:92px;width:280px;opacity:.075}.hero h1{font-size:clamp(2.65rem,11.7vw,3.15rem);letter-spacing:.008em}.hero p{font-size:1rem;margin:20px 0 23px}.pill{font-size:.58rem;letter-spacing:.1em;margin-bottom:16px}.actions{gap:9px}.actions .button{width:100%;min-height:51px}.price-note{text-align:center;line-height:1.5}.paths{padding:62px 0}.path-grid{grid-template-columns:1fr}.path{padding:27px 24px}.path h3{font-size:1.7rem}.cards,.feature-grid{grid-template-columns:1fr}.section-head{gap:20px}.section-head p{font-size:.95rem}section{padding:72px 0}.checklist{grid-template-columns:1fr}.screen{transform:none}.gym-image{min-height:290px}.gym-copy{padding:58px 24px}.price-side,.offer-details{padding:34px 24px}.price-side h2{font-size:3.2rem}.price{font-size:4.8rem}.offer-details h3{font-size:1.8rem}.form{padding:25px 20px}.form-grid{grid-template-columns:1fr}.field.full{grid-column:auto}.field input,.field select{min-height:50px;font-size:16px}.footer-grid{align-items:flex-start;flex-direction:column}.ticker-track{font-size:1rem}.mobile-cta{display:flex;position:fixed;z-index:90;left:0;right:0;bottom:0;background:#090909;border-top:1px solid #333;padding:9px 12px;gap:8px}.mobile-cta .button{flex:1;padding:12px 8px;font-size:.63rem;clip-path:none}.mobile-cta .button.outline{border-color:#777}}
-    @media(max-width:370px){.hero h1{font-size:2.4rem}.brand-main{font-size:.86rem}}
+    /* Dedicated phone layout */
+    @media(max-width:620px){
+      html{scroll-padding-top:72px}body{font-size:15px;padding-bottom:calc(70px + env(safe-area-inset-bottom))}.wrap{width:calc(100% - 30px)}
+      section[id],article[id]{scroll-margin-top:74px}h2{font-size:clamp(2.3rem,11vw,3rem);line-height:.95}h3{line-height:1}
+      .nav{height:62px}.nav .wrap{width:calc(100% - 24px)}.brand{gap:9px}.brand img{width:31px;height:31px}.brand-main{font-size:.91rem;letter-spacing:.035em}
+      .hero{min-height:0;padding:99px 0 58px;align-items:flex-start;background-image:linear-gradient(90deg,rgba(0,0,0,.96) 0%,rgba(0,0,0,.81) 67%,rgba(0,0,0,.42) 100%),linear-gradient(0deg,#070707 0%,transparent 38%),url('./assets/deka-hero.jpg');background-position:64% center}
+      .hero:before{right:-52px;top:82px;width:245px;opacity:.065}.hero-copy{width:100%}.hero h1{font-size:clamp(2.25rem,10.8vw,3rem);line-height:.94;letter-spacing:0}.hero p{font-size:.96rem;line-height:1.48;color:#e6e6e6;margin:19px 0 22px;max-width:35rem}.pill{max-width:100%;font-size:.54rem;line-height:1.35;letter-spacing:.09em;padding:7px 10px;margin-bottom:17px}.pill i{flex:0 0 8px}
+      .actions{display:grid;grid-template-columns:1fr;gap:9px}.actions .button{min-height:50px;padding:13px 16px}.button{clip-path:none;border-radius:0}.price-note{font-size:.67rem;margin-top:11px;padding:0 6px}
+      .ticker{padding:12px 0;margin-top:-9px;transform:rotate(-.8deg) scale(1.015)}.ticker-track{font-size:.88rem;letter-spacing:.065em}
+      .paths{padding:60px 0 64px}.paths-head{margin-bottom:27px}.paths-head h2{font-size:2.35rem;line-height:.96}.path-grid{gap:13px}.path{padding:26px 22px}.path:after{width:64px;right:13px;top:13px}.path h3{font-size:1.65rem;max-width:88%;margin:10px 0 11px}.path p{line-height:1.5;margin-bottom:15px}.path ul{margin-bottom:20px}.path li{padding:6px 0;font-size:.86rem}.path .button{width:100%;min-height:49px;padding:13px 10px;font-size:.69rem}
+      section{padding:66px 0}.section-head{margin-bottom:29px;gap:15px}.section-head p{line-height:1.5}.eyebrow{font-size:.65rem;letter-spacing:.14em;gap:8px}.eyebrow:before{width:23px}
+      .cards{gap:0}.card{min-height:0;padding:25px 23px;border-bottom:1px solid #d2d0cb}.num{font-size:2.5rem}.card h3{font-size:1.45rem;margin:12px 0 8px}.card p{line-height:1.5}
+      .platform:after{width:300px;left:-145px}.platform-grid{gap:37px}.platform-copy p{font-size:.98rem;line-height:1.5}.checklist{grid-template-columns:1fr 1fr;gap:0 14px;margin-top:22px}.check{padding:10px 0;font-size:.78rem}.screen{padding:7px;box-shadow:0 20px 45px rgba(0,0,0,.5)}.screen:before{top:-22px;font-size:.51rem}
+      .feature-grid{gap:10px}.feature{min-height:0;padding:23px 21px}.feature-icon{width:40px;height:40px}.feature h3{margin:17px 0 8px}.feature p{line-height:1.5}.tag{margin-top:13px}
+      .gym-grid{min-height:0}.gym-image{min-height:260px;background-position:center}.gym-copy{padding:55px 22px 58px}.gym-copy h2{font-size:2.25rem}.gym-copy p{font-size:.96rem}.big-list li{grid-template-columns:28px 1fr;gap:10px;padding:14px 0;font-size:.9rem;line-height:1.45}
+      .step-grid{gap:28px;margin-top:31px}.step{padding-top:15px}.step .step-no{font-size:3.7rem}.step h3{margin:11px 0 6px}.step p{line-height:1.48}.steps:after{width:300px;right:-125px;top:-80px}
+      .offer-box{box-shadow:0 20px 50px rgba(0,0,0,.35)}.price-side,.offer-details{padding:32px 22px}.price-side h2{font-size:3rem;margin-top:5px}.price{font-size:4.5rem;margin-top:13px}.price-side .button{width:100%;min-height:49px}.offer-details h3{font-size:1.65rem;line-height:1.05}.offer-list li{padding:8px 0}.fine{line-height:1.5}
+      .proof{padding:64px 0}.quote{font-size:2rem;line-height:1.07}.attribution{font-size:.64rem;line-height:1.55}.proof:before{width:260px}
+      .faq-wrap{gap:27px}.faq-q{padding:19px 0;font-size:.91rem;line-height:1.4;align-items:flex-start}.faq-q span:last-child{line-height:1}.faq-a p{padding:0 16px 19px 0;line-height:1.5}
+      .apply{padding:65px 0}.apply-grid{gap:26px}.apply-copy p{font-size:.96rem;line-height:1.5}.apply:before{width:340px;left:-140px;bottom:-85px}.form{padding:24px 18px}.form-grid{gap:13px}.field input,.field select{padding:13px}.form .button{min-height:51px}
+      footer{padding:30px 0}.footer-grid{gap:16px;align-items:center;text-align:center}.footer-mark{font-size:1.12rem}.footer-mark img{width:31px;height:31px}.footer-note{line-height:1.5}
+      .mobile-cta{min-height:70px;align-items:center;padding:8px 10px calc(8px + env(safe-area-inset-bottom));background:rgba(7,7,7,.96);backdrop-filter:blur(14px);box-shadow:0 -8px 24px rgba(0,0,0,.28)}.mobile-cta .button{min-height:46px;line-height:1.15;font-size:.59rem;letter-spacing:.075em}.mobile-cta .button.outline{background:#181818}
+      @media(hover:none){.card:hover,.feature:hover,.button:hover{transform:none;box-shadow:none}}
+    }
+    @media(max-width:350px){.hero h1{font-size:2.18rem}.brand-main{font-size:.82rem}.checklist{grid-template-columns:1fr}.paths-head h2,.gym-copy h2{font-size:2.1rem}.mobile-cta .button{font-size:.55rem}}
     @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;animation:none!important;transition:none!important}.reveal{opacity:1;transform:none}}
   </style>
 </head>
@@ -54,7 +79,7 @@
       <div class="wrap"><div class="hero-copy reveal">
         <div class="pill"><i></i> For current and future DEKA affiliate gyms</div>
         <h1><span>Power Up Your</span><span>DEKA Membership.</span><span>Grow Your Gym.</span><span class="red">Powered By AI.</span></h1>
-        <p>DEKA Growth is not a separate way to join DEKA. It is the Adapt or Die growth system designed to power up your DEKA affiliation with an all-in-one AI and CRM platform, gym-specific automations, coaching, and support. Already affiliated or still considering DEKA? Choose your path below.</p>
+        <p>DEKA Growth is the Adapt or Die AI + CRM system that powers up your DEKA affiliation. Convert more leads, retain more members, and grow with gym-specific automation, coaching, and support.</p>
         <div class="actions"><a class="button" href="#current-affiliate">I’m already an affiliate <span class="arrow">→</span></a><a class="button outline" href="#future-affiliate">I want to join DEKA</a></div>
         <div class="price-note"><span class="slash">$297/month</span> <b>Proposed founding offer: $197/month</b> + standard DEKA affiliation</div>
       </div></div>
@@ -152,7 +177,7 @@
   </main>
 
   <footer><div class="wrap footer-grid"><div class="footer-mark"><img src="./assets/spartan-helmet.svg" alt="" /> <span>SPARTAN DEKA <span class="red">×</span> ADAPT OR DIE</span></div><div class="footer-note">Concept landing page for discussion purposes. DEKA and Spartan marks belong to their respective owners. Offer details, claims, pricing, and partnership terms require final approval before public launch.</div></div></footer>
-  <div class="mobile-cta" aria-label="Choose your path"><a class="button" href="#current-affiliate">Current affiliate</a><a class="button outline" href="#future-affiliate">Want to join</a></div>
+  <div class="mobile-cta" aria-label="Choose your path"><a class="button" href="#current-affiliate">I’m an affiliate</a><a class="button outline" href="#future-affiliate">Considering DEKA</a></div>
 
   <script>
     document.querySelectorAll('.faq-q').forEach((button)=>button.addEventListener('click',()=>button.parentElement.classList.toggle('open')));
