@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Spartan Race Finder — Mobile UX Mockups</title>
+<style>
+  :root{ --ink:#111; --sub:#555; --bg:#f7f7f7; --accent:#c8102e; }
+  *{box-sizing:border-box;}
+  body{
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    margin:0; background:var(--bg); color:var(--ink);
+  }
+  header{
+    background:#111; color:#fff; padding:40px 20px 32px;
+    text-align:center;
+  }
+  header h1{ margin:0 0 8px; font-size:28px; letter-spacing:.5px; }
+  header p{ margin:0; color:#ccc; font-size:15px; max-width:640px; margin:0 auto; }
+  .wrap{ max-width:1000px; margin:0 auto; padding:32px 20px 80px; }
+  section{ margin-bottom:56px; }
+  section h2{ font-size:20px; border-left:4px solid var(--accent); padding-left:12px; margin-bottom:6px; }
+  section .desc{ color:var(--sub); font-size:15px; margin:0 0 20px; max-width:760px; line-height:1.5; }
+  .card{
+    background:#fff; border-radius:10px; overflow:hidden;
+    box-shadow:0 1px 4px rgba(0,0,0,0.08); border:1px solid #e6e6e6;
+  }
+  .card img{ display:block; width:100%; height:auto; }
+  footer{ text-align:center; color:#999; font-size:13px; padding:20px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Spartan Race Finder — Mobile UX Mockups</h1>
+  <p>Concept mockups for the mobile race finder at spartan.com/en/race/find-race. Static design concepts for review, not live builds.</p>
+</header>
+<div class="wrap">
+
+  <section>
+    <h2>1. Button-based filters (current vs. proposed)</h2>
+    <p class="desc">Replaces the sort dropdown with a two-button Date/Distance toggle, and adds race-type filter chips beneath it so users can filter with fewer taps instead of opening dropdown menus.</p>
+    <div class="card"><img src="before-after-mockup.png" alt="Before and after: dropdown filters vs button/chip filters"></div>
+  </section>
+
+  <section>
+    <h2>2. "Find My Race" guided quiz</h2>
+    <p class="desc">For first-time visitors who don't know what Sprint, Beast, Ultra, or DEKA mean — a 2-question quiz (fitness level + distance comfort) recommends a race type instead of making them decode jargon.</p>
+    <div class="card"><img src="quiz-flow-mockup-large.png" alt="Find My Race quiz flow: entry point, two questions, and recommendation result"></div>
+  </section>
+
+  <section>
+    <h2>3. "Just pick a date" — signup-first messaging</h2>
+    <p class="desc">Reframes the decision entirely: race type and distance don't matter as much as just committing to a date. Removes filters up front in favor of a simple upcoming-dates list and reassurance messaging, with trust stats reinforcing the signup step.</p>
+    <div class="card"><img src="just-sign-up-mockup-vertical.png" alt="Just pick a date flow: entry point, date list, and signup confirmation"></div>
+  </section>
+
+</div>
+<footer>Riverside Farm marketing / Genie Rocket — concept mockups for internal review</footer>
+</body>
+</html>
